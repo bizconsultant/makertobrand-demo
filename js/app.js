@@ -475,10 +475,10 @@
     </section>`;
   }
   function founderCard(f, compact) {
-    const li = `<a class="li-link" href="${escapeHtml(f.linkedin || "#")}" aria-label="LinkedIn profile for ${escapeHtml(f.name)} (placeholder)">${linkedinIcon()} <span>LinkedIn</span></a>`;
+    const alt = "Portrait of " + escapeHtml(f.name);
     if (compact) {
       return `<a class="founder-teaser" href="about.html">
-        <div class="founder-photo"><img src="${f.photo}" alt="Photo placeholder for ${escapeHtml(f.name)}"></div>
+        <div class="founder-photo"><img src="${f.photo}" alt="${alt}"></div>
         <div>
           <h3>${escapeHtml(f.name)}</h3>
           <p class="muted">${escapeHtml(f.role)}</p>
@@ -486,13 +486,12 @@
       </a>`;
     }
     return `<article class="founder-card">
-      <div class="founder-photo"><img src="${f.photo}" alt="Photo placeholder for ${escapeHtml(f.name)}"></div>
+      <div class="founder-photo"><img src="${f.photo}" alt="${alt}"></div>
       <div class="founder-body">
         <span class="eyebrow ink">Owner</span>
         <h2>${escapeHtml(f.name)}</h2>
         <p class="founder-role">${escapeHtml(f.role)}</p>
         <p>${escapeHtml(f.bio)}</p>
-        ${li}
       </div>
     </article>`;
   }

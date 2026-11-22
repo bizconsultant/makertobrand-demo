@@ -24,7 +24,7 @@ npx serve .
 - Ready-made wholesale catalogue, product pages with price breaks and MOQ, cart, and a mock checkout
 - Custom production briefs, quote comparison, accept-and-pay-a-deposit
 - Payments described as held until delivery (intended partner: Razorpay). Checkout uses a **Demo payment** button and never collects card details
-- About the owners (placeholder founder details in `js/data.js`) and a Quality Control service page
+- About the owners (Nizam Uddin and Dipankar Bose, details in `js/data.js`) and a Quality Control service page
 - Brand dashboard, manufacturer dashboard (gross, 3% fee or waived on Premium, net payout), in-app messaging, and an admin view with commissions, membership revenue and “Block account”
 
 A small **Demo – sample data** label sits at the top of every page, with a “View as” switcher for presenting the three roles.

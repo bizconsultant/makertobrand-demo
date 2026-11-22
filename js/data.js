@@ -1081,40 +1081,37 @@ window.MTB_DATA = {
   ],
 
   // =============================================================================
-  // FOUNDERS / OWNERS + QC SERVICE — placeholder content.
-  // Swap the real owners' names, roles, short bios (~60 words), photographs and
-  // LinkedIn URLs in `founders` below. Keep mission and trust points here too,
-  // so about.html does not hard-code personal details. QC copy for the service
+  // FOUNDERS / OWNERS + QC SERVICE.
+  // Keep owner names, roles, short bios and photograph paths in `founders` below
+  // so about.html and the homepage teaser stay in sync. QC copy for the service
   // page, homepage and sample reports also lives in this block.
   // =============================================================================
   founders: [
     {
-      id: "owner-1",
-      name: "Founder Name",
-      role: "Co-owner",
-      photo: "images/founder-placeholder-1.svg",
-      linkedin: "#",
-      bio: "Replace this biography with the first owner's story. Placeholder: more than two decades alongside apparel brands, from sampling rooms to fashion shoots, watching how labels brief factories and where quality is won or lost. The aim is a marketplace a brand can trust with its name on the garment. Edit this paragraph when the real biography is ready."
+      id: "nizam-uddin",
+      name: "Nizam Uddin",
+      role: "Co-founder, Manufacturing",
+      photo: "images/nizam-uddin.webp",
+      bio: "Nizam Uddin is a co-founder of MakerToBrand, with 20–25 years of experience in garment manufacturing. He brings that making-side view to the platform, so factories can present their work clearly and brands can source with a better sense of how a garment is actually made."
     },
     {
-      id: "owner-2",
-      name: "Founder Name",
-      role: "Co-owner",
-      photo: "images/founder-placeholder-2.svg",
-      linkedin: "#",
-      bio: "Replace this biography with the second owner's story. Placeholder: a career on the manufacturing side — pattern rooms, fabric yards and finishing lines in India's apparel hubs — with a clear view of what a clean shipment takes. This owner helps factories show their work, and helps brands receive it as briefed. Edit this paragraph when the real biography is ready."
+      id: "dipankar-bose",
+      name: "Dipankar Bose",
+      role: "Co-founder, Brand Building",
+      photo: "images/dipankar-bose.webp",
+      bio: "Dipankar Bose is a co-founder of MakerToBrand, with 20–25 years of experience in brand building. He brings that brand-side view to the platform, so labels can find the right manufacturers and follow an order through with more confidence — as a considered partnership, not a leap of faith."
     }
   ],
   aboutStory: {
     eyebrow: "The owners",
     headline: "A marketplace run by people who have sat on both sides of the table.",
-    story: "MakerToBrand is owned and run by two people. This page is a placeholder until their names, photographs and stories are confirmed — then everything can be updated in one place. The idea is simple: brands should be able to find a factory, place an order, and know that someone is watching the work on their behalf, from the pattern sheet to the fabric on the line."
+    story: "MakerToBrand is owned and run by two co-founders: Nizam Uddin, with 20–25 years in garment manufacturing, and Dipankar Bose, with 20–25 years in brand building. The idea is simple: brands should be able to find a factory, place an order, and know that someone who understands both sides is watching the work on their behalf."
   },
   trustPoints: [
     { title: "Two owners, one standard.", text: "The platform is not an anonymous listing board. It is run by two owners who stay close to how a garment is briefed, made and checked." },
     { title: "A QC team that works for the brand.", text: "A QC Master and QC Merchandisers review fabric, patterns, measurements and finishing on the factory floor, and file a photo report on the order." },
     { title: "Money held until delivery.", text: "Payments are held on MakerToBrand and released when the goods arrive. That protection exists only for orders paid on the site." },
-    { title: "Open about what is still a draft.", text: "Founder names and portraits on this page are clearly marked as placeholders, so a client can see the shape of the page before the real details are dropped in." }
+    { title: "Both sides of the table.", text: "One co-founder comes from garment manufacturing, the other from brand building. Together they set the standard for how a garment is briefed, made and checked." }
   ],
   qcService: {
     includedNote: "QC service included for brand subscribers",
