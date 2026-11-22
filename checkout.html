@@ -56,17 +56,18 @@
             <label class="field"><span>PIN</span><input name="pin" value="400001" required></label>
             <h2 style="font-size:32px;margin-top:12px">Payment</h2>
             <div class="escrow-callout">
-              <h3>No card details on this page</h3>
-              <p>A live build would open Razorpay here. This demo never collects a card, UPI, or account number. Use the button below to simulate a successful payment, held in escrow.</p>
+              <h3>Held until delivery — only on this site</h3>
+              <p>The amount is secured at checkout and the factory is guaranteed payment when the goods arrive. That protection exists only for orders paid on MakerToBrand. A live build would open Razorpay here. This demo never collects a card, UPI, or account number.</p>
             </div>
-            <div class="note-box">Demo payment only — you will not be charged. The following screen treats the amount as held until delivery.</div>
+            <div class="note-box">Demo payment only — you will not be charged. GST invoice, tracking, optional inspection and a one-click re-order are included because you are paying on the site.</div>
             <button class="btn btn-gold btn-block" type="submit" style="height:52px">Demo payment · hold ${MTB.inr(sub)}</button>
           </form>
           <aside class="summary-card">
             <h3 style="font-size:28px;margin-bottom:12px">Order</h3>
             ${lines}
             <div class="summary-row total"><span>To be held</span><span>${MTB.inr(sub)}</span></div>
-            <p class="muted" style="margin-top:12px;font-size:13px">Platform commission is taken only when the payment is released to the manufacturer.</p>
+            <p class="muted" style="margin-top:12px;font-size:13px">Commission starts at 5% for a first order together, then 3% from the second and 2% from the fifth. It is taken only when payment is released.</p>
+            <p class="muted" style="font-size:13px">Off-site payments are not held, and the factory is not paid through MakerToBrand.</p>
           </aside>`;
         document.getElementById("co").addEventListener("submit", (e) => {
           e.preventDefault();

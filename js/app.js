@@ -206,6 +206,7 @@
             <h4>Platform</h4>
             <a href="how-it-works.html">How it works</a>
             <a href="how-it-works.html#payments">Payments &amp; escrow</a>
+            <a href="how-it-works.html#safety">Trade safely</a>
             <a href="signup.html">Create an account</a>
             <a href="login.html">Sign in</a>
           </div>
@@ -261,6 +262,57 @@
     else cart.push(item);
     setCart(cart);
     toast("Added to cart");
+  }
+
+
+  function partnerOrders(brandName, makerId) {
+    if (!brandName || !makerId) return [];
+    return allOrders().filter((o) => o.brand === brandName && o.makerId === makerId);
+  }
+  function hasPaidOrderWith(brandName, makerId) {
+    return partnerOrders(brandName, makerId).length > 0;
+  }
+  function loyaltyRate(existingCount) {
+    // existingCount = orders already placed between the pair
+    // next order: 5% first, 3% from 2nd, 2% from 5th
+    if (existingCount >= 4) return 0.02;
+    if (existingCount >= 1) return 0.03;
+    return 0.05;
+  }
+  function pct(rate) { return Math.round(rate * 100) + "%"; }
+  function makerContacts(m) {
+    const directory = {
+      "loom-lattice": { phone: "+91 421 555 0140", email: "studio@loomlattice.example", wa: "+91 98765 11001" },
+      "desert-weave": { phone: "+91 141 555 0288", email: "hello@desertweave.example", wa: "+91 98290 22014" },
+      "sutra-knitworks": { phone: "+91 161 555 0331", email: "orders@sutraknit.example", wa: "+91 98140 33021" },
+      "riverbend": { phone: "+91 261 555 0442", email: "sales@riverbend.example", wa: "+91 98250 44008" },
+      "khadi-atelier": { phone: "+91 22 5555 0510", email: "studio@khadiatelier.example", wa: "+91 98200 55019" },
+      "northline": { phone: "+91 124 555 0660", email: "programmes@northline.example", wa: "+91 98100 66012" },
+      "canopy-mills": { phone: "+91 80 5555 0774", email: "hello@canopymills.example", wa: "+91 98860 77023" },
+      "coral-thread": { phone: "+91 421 555 0885", email: "kids@coralthread.example", wa: "+91 98420 88031" }
+    };
+    return directory[m && m.id] || { phone: "+91 22 5555 0000", email: "hello@maker.example", wa: "+91 90000 00000" };
+  }
+  function maskContact(text) {
+    let masked = false;
+    let out = String(text || "");
+    out = out.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, function () { masked = true; return "••••"; });
+    out = out.replace(/(https?:\/\/\S+|wa\.me\/\S+|chat\.whatsapp\.com\/\S+)/gi, function () { masked = true; return "••••"; });
+    out = out.replace(/(\+91[\s-]*)?[6-9]\d{9}\b/g, function () { masked = true; return "••••"; });
+    out = out.replace(/(\+91[\s-]*)?\d{5}[\s-]?\d{5}\b/g, function () { masked = true; return "••••"; });
+    out = out.replace(/\b\d{3}[\s.-]\d{3}[\s.-]\d{4}\b/g, function () { masked = true; return "••••"; });
+    return { text: out, masked: masked };
+  }
+  function contactUnlocked(makerId) {
+    const s = getSession();
+    if (!s) return false;
+    if (s.role === "admin") return true;
+    if (s.role === "manufacturer" && (s.makerId === makerId || (s.name && maker(makerId) && s.name === maker(makerId).name))) return true;
+    if (s.role === "brand") return hasPaidOrderWith(s.name, makerId);
+    return false;
+  }
+  function protectBadge() {
+    return `<span class="badge badge-held">Protected on MakerToBrand only</span>`;
   }
 
   function wrapChrome() {
@@ -323,6 +375,6 @@
   window.MTB = {
     init, inr, param, getSession, setSession, getCart, setCart, addToCart,
     maker, product, rfq, allRfqs, allOrders, getExtraRfqs, getBlocked, setBlocked,
-    tierPrice, toast, stars, escapeHtml, requireRole, makerCard, productCard, KEY, $, $$
+    tierPrice, toast, stars, escapeHtml, requireRole, makerCard, productCard, partnerOrders, hasPaidOrderWith, loyaltyRate, pct, makerContacts, maskContact, contactUnlocked, protectBadge, KEY, $, $$
   };
 })();

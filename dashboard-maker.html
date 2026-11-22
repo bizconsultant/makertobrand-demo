@@ -18,7 +18,7 @@
     <div class="wrap-wide page-intro">
       <span class="eyebrow ink">Manufacturer dashboard</span>
       <h1 id="hello">Enquiries, quotes, orders and earnings.</h1>
-      <p class="lead">The view a factory owner would open every morning — work coming in, money still held, money already released.</p>
+      <p class="lead">The view a factory owner would open every morning — work coming in, money still held, money already released. Repeat partners pay a lower commission on the next on-site order.</p>
     </div>
     <div class="wrap-wide">
       <div class="kpi-grid" id="kpis"></div>
@@ -98,8 +98,27 @@
                 <td>${o.status !== "released" ? MTB.inr(o.deposit || o.total) : "—"}</td>
               </tr>`;
             }).join("");
-            return `<p class="muted">Commission follows your membership — 3% on Premium, 4% on Pro, 5% on Free. Loom &amp; Lattice is on Premium in this demo.</p>
-              <p style="margin-bottom:16px"><a class="btn btn-ghost btn-sm" href="pricing.html">Review memberships</a>
+            const byBrand = {};
+            myOrders.forEach((o) => {
+              const name = o.brand || "Brand";
+              byBrand[name] = byBrand[name] || [];
+              byBrand[name].push(o);
+            });
+            const partnerRows = Object.keys(byBrand).map((name) => {
+              const n = byBrand[name].length;
+              const next = MTB.loyaltyRate(n);
+              const current = MTB.loyaltyRate(Math.max(0, n - 1));
+              return `<tr>
+                <td>${MTB.escapeHtml(name)}</td>
+                <td>${n}</td>
+                <td>${MTB.pct(current)} on the latest order</td>
+                <td><span class="badge badge-ok">Repeat partner ${MTB.pct(next)}</span> on the next on-site order</td>
+              </tr>`;
+            }).join("");
+            return `<p class="muted">Commission between a brand and your factory starts at 5% on the first on-site order, falls to 3% from the second, and to 2% from the fifth. That repeat-partner rate only applies to orders paid on MakerToBrand.</p>
+              <h3 style="font-size:24px;margin:18px 0 10px">Repeat partners</h3>
+              <div class="table-wrap"><table class="data"><thead><tr><th>Brand</th><th>Orders together</th><th>Latest rate</th><th>Next order</th></tr></thead><tbody>${partnerRows || "<tr><td colspan=4>No on-site orders yet.</td></tr>"}</tbody></table></div>
+              <p style="margin:16px 0"><a class="btn btn-ghost btn-sm" href="pricing.html">Review memberships</a>
               <a class="btn btn-ghost btn-sm" href="manufacturer.html?id=${makerId}">View your public profile</a></p>
               <div class="table-wrap"><table class="data"><thead><tr><th>Order</th><th>Gross</th><th>Commission</th><th>Released to you</th><th>Still held</th></tr></thead><tbody>${rows}</tbody></table></div>`;
           }

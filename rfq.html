@@ -54,7 +54,8 @@
               <aside>
                 <div class="sticky-card">
                   <h3 style="font-size:24px;margin-bottom:8px">How acceptance works</h3>
-                  <p class="muted">Accept a quote, then pay a deposit through a demo payment. The remainder is due on delivery, and both amounts are held until then.</p>
+                  <p class="muted">Accept a quote, then pay a deposit through a demo payment. The remainder is due on delivery, and both amounts are held until then. That holding — and the factory’s guaranteed payout — apply only to deposits paid on MakerToBrand.</p>
+                  <p class="muted">Commission is 5% on a first order together, 3% from the second, 2% from the fifth.</p>
                   <a class="btn btn-ghost btn-block" href="messages.html">Open messages</a>
                 </div>
               </aside>
@@ -133,8 +134,8 @@
             <h3 style="font-size:28px;margin-bottom:8px">Demo deposit</h3>
             <p>Accept ${MTB.escapeHtml(m.name)} at ${MTB.inr(q.price)} per piece. A deposit of <strong>${MTB.inr(deposit)}</strong> (${q.deposit}%) will be held. Balance ${MTB.inr(line - deposit)} is due on delivery.</p>
             <div class="escrow-callout">
-              <h3>No card details</h3>
-              <p>Intended partner: Razorpay. This button only simulates a held deposit.</p>
+              <h3>No card details · held on-site only</h3>
+              <p>Intended partner: Razorpay. The deposit is held until delivery, and the factory is guaranteed that payout, only because it is paid on MakerToBrand. This button only simulates a held deposit.</p>
             </div>
             <button class="btn btn-gold btn-block" type="button" id="pay">Demo payment · hold ${MTB.inr(deposit)}</button>
             <button class="btn btn-ghost btn-block" type="button" id="cancel" style="margin-top:8px">Cancel</button>

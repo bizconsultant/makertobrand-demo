@@ -35,6 +35,17 @@
         const withId = MTB.param("with");
         const threadParam = MTB.param("thread");
         let threads = MTB_DATA.threads.map((t) => JSON.parse(JSON.stringify(t)));
+        // Demo: a manufacturer tried to share WhatsApp before a first paid order
+        const t1 = threads.find((t) => t.id === "t1");
+        if (t1 && !t1.messages.some((m) => m.shareAttempt)) {
+          t1.messages.push({
+            from: "maker",
+            name: "Desert Weave Atelier",
+            time: "5 Nov, 15:02",
+            text: "If it is easier, WhatsApp me on +91 98290 22014.",
+            shareAttempt: true
+          });
+        }
         // If arriving from a manufacturer profile, open or create a thread
         if (withId && !threads.some((t) => t.withId === withId)) {
           const m = MTB.maker(withId);
@@ -56,7 +67,11 @@
         const session = MTB.getSession();
         const meSide = (session && session.role === "manufacturer") ? "maker" : "brand";
 
+        function isUnlocked() {
+          return current.withId ? MTB.contactUnlocked(current.withId) : false;
+        }
         function draw() {
+          const unlocked = isUnlocked();
           document.getElementById("root").innerHTML = `
             <div class="thread-list">
               ${threads.map((t) => `<button type="button" class="thread-item ${t.id===current.id?"is-on":""}" data-id="${t.id}" style="width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--line-soft)">
@@ -69,13 +84,17 @@
               <div style="padding:16px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px">
                 <div>
                   <strong>${MTB.escapeHtml(current.with)}</strong>
-                  <div class="muted" style="font-size:13px">${current.withId ? `<a href="manufacturer.html?id=${current.withId}" style="text-decoration:underline">View profile</a>` : ""}</div>
+                  <div class="muted" style="font-size:13px">${current.withId ? `<a href="manufacturer.html?id=${current.withId}" style="text-decoration:underline">View profile</a>` : ""}
+                    ${unlocked ? ' · <span class="badge badge-ok">Contacts unlocked</span>' : ' · <span class="badge badge-held">Contacts locked</span>'}</div>
                 </div>
               </div>
+              ${unlocked ? "" : `<div class="msg-protect"><strong>Contacts stay hidden until a first paid order.</strong> Phone numbers, email addresses, WhatsApp and links are masked in this conversation so both sides keep payment protection.</div>`}
               <div class="chat-log" id="log">
                 ${current.messages.map((m) => {
                   const mine = m.from === meSide;
-                  return `<div class="bubble ${mine?"me":""}"><small>${MTB.escapeHtml(m.name)} · ${m.time}</small>${MTB.escapeHtml(m.text)}</div>`;
+                  const shown = unlocked ? m.text : MTB.maskContact(m.text).text;
+                  const wasMasked = !unlocked && (m.shareAttempt || MTB.maskContact(m.text).masked);
+                  return `<div class="bubble ${mine?"me":""} ${wasMasked?"is-masked":""}"><small>${MTB.escapeHtml(m.name)} · ${m.time}</small>${MTB.escapeHtml(shown)}${wasMasked ? `<span class="mask-flag">Hidden until your first order on MakerToBrand</span>` : ""}</div>`;
                 }).join("")}
               </div>
               <form class="chat-compose" id="compose">
@@ -91,12 +110,15 @@
           }));
           document.getElementById("compose").addEventListener("submit", (e) => {
             e.preventDefault();
-            const text = new FormData(e.target).get("text").trim();
-            if (!text) return;
+            const raw = new FormData(e.target).get("text").trim();
+            if (!raw) return;
             const name = (session && session.name) || (meSide === "maker" ? "Loom & Lattice" : "Nila Atelier");
-            current.messages.push({ from: meSide, name, time: "Just now", text });
-            current.preview = text;
+            const unlockedNow = isUnlocked();
+            const result = unlockedNow ? { text: raw, masked: false } : MTB.maskContact(raw);
+            current.messages.push({ from: meSide, name, time: "Just now", text: result.text, shareAttempt: result.masked });
+            current.preview = result.text;
             current.updated = "Just now";
+            if (result.masked) MTB.toast("Contact details are hidden until your first paid order.");
             draw();
           });
         }

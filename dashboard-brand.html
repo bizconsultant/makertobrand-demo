@@ -18,7 +18,7 @@
     <div class="wrap-wide page-intro">
       <span class="eyebrow ink">Brand dashboard</span>
       <h1 id="hello">Your orders, briefs and conversations.</h1>
-      <p class="lead">A quiet desk for a label that buys both stock and custom work.</p>
+      <p class="lead">A quiet desk for a label that buys both stock and custom work. GST invoices, tracking and re-orders are included only for orders paid on the site.</p>
     </div>
     <div class="wrap-wide">
       <div class="kpi-grid" id="kpis"></div>
@@ -64,7 +64,13 @@
                   <td>${MTB.escapeHtml(label)} · ${Number(o.qty || (o.items&&o.items[0]&&o.items[0].qty) || "").toLocaleString("en-IN")} pcs</td>
                   <td>${m ? `<a href="manufacturer.html?id=${m.id}">${MTB.escapeHtml(m.name)}</a>` : "Several"}</td>
                   <td>${MTB.inr(o.total)}</td>
-                  <td><span class="badge ${badge(o.status)}">${o.statusLabel}</span></td>
+                  <td><span class="badge ${badge(o.status)}">${o.statusLabel}</span>
+                    <div class="muted" style="margin-top:6px">
+                      <a href="order.html?id=${o.id}">Track</a> ·
+                      <a href="invoice.html?id=${o.id}">GST invoice</a> ·
+                      <a href="order.html?id=${o.id}">Re-order</a>
+                    </div>
+                  </td>
                 </tr>`;
               }).join("")}
             </tbody></table></div>`;

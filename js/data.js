@@ -705,7 +705,8 @@ window.MTB_DATA = {
     { id: "u10", name: "Canopy Mills", type: "Manufacturer", city: "Bengaluru", plan: "Premium", status: "active", joined: "19 Jun 2026" },
     { id: "u11", name: "Coral Thread House", type: "Manufacturer", city: "Tiruppur", plan: "Pro", status: "active", joined: "3 Jul 2026" },
     { id: "u12", name: "Khadi Atelier Co.", type: "Manufacturer", city: "Mumbai", plan: "Premium", status: "active", joined: "27 May 2026" },
-    { id: "u13", name: "QuickLot Garments", type: "Manufacturer", city: "Surat", plan: "Free", status: "blocked", joined: "1 Nov 2026" }
+    { id: "u13", name: "QuickLot Garments", type: "Manufacturer", city: "Surat", plan: "Free", status: "blocked", joined: "1 Nov 2026" },
+    { id: "u14", name: "Silverloom Exports", type: "Manufacturer", city: "Surat", plan: "Pro", status: "active", joined: "9 Oct 2026" }
   ],
   threads: [
     {

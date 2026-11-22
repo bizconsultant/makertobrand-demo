@@ -65,13 +65,15 @@
                 ${products.length ? `<h2 style="font-size:36px;margin:12px 0 18px">Ready-made from this floor</h2>
                 <div class="product-grid">${products.map(MTB.productCard).join("")}</div>` : ""}
                 <h2 style="font-size:36px;margin:36px 0 8px">What buyers say</h2>
-                ${m.reviews.map((r) => `<div class="review"><div class="card-meta"><strong>${MTB.escapeHtml(r.by)}</strong> <span class="stars">${MTB.stars(r.rating)}</span></div><p>“${MTB.escapeHtml(r.text)}”</p></div>`).join("")}
+                <p class="muted">Only orders paid on MakerToBrand can be reviewed.</p>
+                ${m.reviews.map((r) => `<div class="review"><div class="card-meta"><strong>${MTB.escapeHtml(r.by)}</strong> <span class="stars">${MTB.stars(r.rating)}</span> <span class="badge badge-ok">Verified order on MakerToBrand</span></div><p>“${MTB.escapeHtml(r.text)}”</p></div>`).join("")}
               </div>
               <aside>
                 <div class="sticky-card">
                   <h3 style="font-size:28px;margin-bottom:8px">Start a conversation</h3>
-                  <p class="muted">Message the factory, or invite a quote on a custom brief. In the live product this would land in both inboxes.</p>
-                  <a class="btn btn-primary btn-block" href="messages.html?with=${encodeURIComponent(m.id)}">Send a message</a>
+                  <p class="muted">Message the factory, or invite a quote on a custom brief. Phone, email and WhatsApp stay locked until your first order is paid on the site.</p>
+                  <div id="contact-box"></div>
+                  <a class="btn btn-primary btn-block" href="messages.html?with=${encodeURIComponent(m.id)}" style="margin-top:12px">Send a message</a>
                   <a class="btn btn-ghost btn-block" href="custom.html?invite=${encodeURIComponent(m.id)}" style="margin-top:8px">Request a custom quote</a>
                   <hr class="sep">
                   <div class="card-meta">
@@ -81,6 +83,24 @@
               </aside>
             </div>
           </div>`;
+        const c = MTB.makerContacts(m);
+        const unlocked = MTB.contactUnlocked(m.id);
+        const box = document.getElementById("contact-box");
+        if (unlocked) {
+          box.innerHTML = `<div class="lock-list">
+            <div class="lock-row"><span>Phone</span><span class="lock-value">${MTB.escapeHtml(c.phone)}</span></div>
+            <div class="lock-row"><span>Email</span><span class="lock-value">${MTB.escapeHtml(c.email)}</span></div>
+            <div class="lock-row"><span>WhatsApp</span><span class="lock-value">${MTB.escapeHtml(c.wa)}</span></div>
+          </div>
+          <p class="contact-lock-note">Unlocked because you already have a paid order with this manufacturer on MakerToBrand.</p>`;
+        } else {
+          box.innerHTML = `<div class="lock-list">
+            <div class="lock-row"><span>Phone</span><span class="lock-value is-locked">•••• ••• ••••<em>Unlocks after your first order</em></span></div>
+            <div class="lock-row"><span>Email</span><span class="lock-value is-locked">••••••••@••••<em>Unlocks after your first order</em></span></div>
+            <div class="lock-row"><span>WhatsApp</span><span class="lock-value is-locked">•••• ••••• •••••<em>Unlocks after your first order</em></span></div>
+          </div>
+          <p class="contact-lock-note">Pay for your first order on MakerToBrand to unlock contact details. Until then, use in-app messages — numbers and links shared in chat are masked.</p>`;
+        }
       }
     });
 

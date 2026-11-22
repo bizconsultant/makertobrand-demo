@@ -18,10 +18,11 @@
     <div class="wrap-wide page-intro">
       <span class="eyebrow ink">Admin</span>
       <h1>The house view.</h1>
-      <p class="lead">Users, orders, commission earned, and a single action to block an account if something is wrong.</p>
+      <p class="lead">Users, orders, commission earned, fair-use flags, and actions to warn, remove a verified badge, or block an account.</p>
     </div>
     <div class="wrap-wide">
       <div class="kpi-grid" id="kpis"></div>
+      <div id="flag-box"></div>
       <div class="tabs" id="tabs">
         <button type="button" class="is-on" data-tab="users">Users</button>
         <button type="button" data-tab="orders">Orders</button>
@@ -39,6 +40,12 @@
       page: "admin",
       after() {
         MTB.requireRole("admin");
+        const FLAG_KEY = "mtb_fairuse_flag";
+        function flagState() {
+          try { return JSON.parse(localStorage.getItem(FLAG_KEY) || "null") || { status: "open", badge: true }; }
+          catch { return { status: "open", badge: true }; }
+        }
+        function setFlagState(s) { localStorage.setItem(FLAG_KEY, JSON.stringify(s)); }
         const orders = MTB.allOrders();
         const gmv = orders.reduce((a,o) => a + o.total, 0);
         const comm = orders.reduce((a,o) => a + (o.commission || Math.round(o.total * 0.045)), 0);
@@ -99,8 +106,45 @@
           }
         };
         let tab = "users";
+        function renderFlag() {
+          const st = flagState();
+          const box = document.getElementById("flag-box");
+          const status = st.status === "warned" ? '<span class="badge badge-wait">Warned</span>'
+            : st.status === "badge-removed" ? '<span class="badge badge-wait">Verified badge removed</span>'
+            : st.status === "blocked" ? '<span class="badge badge-block">Blocked</span>'
+            : '<span class="badge badge-block">Flagged: off-platform attempt</span>';
+          const actions = st.status === "blocked"
+            ? `<button class="btn btn-ghost btn-sm" type="button" data-flag="restore">Restore account</button>`
+            : `<button class="btn btn-ghost btn-sm" type="button" data-flag="warn">Warn</button>
+               <button class="btn btn-ghost btn-sm" type="button" data-flag="badge">Remove verified badge</button>
+               <button class="btn btn-danger btn-sm" type="button" data-flag="block">Block account</button>`;
+          box.innerHTML = `<aside class="flag-card">
+            ${status}
+            <h3>Silverloom Exports tried to move a deal off the site.</h3>
+            <p class="muted" style="margin:0">A WhatsApp number was shared in chat on 18 Nov 2026, before any paid order with the brand. The number was masked automatically. Fair-use terms allow a warning, the removal of a verified badge, or a block.</p>
+            <div class="flag-actions">${actions}</div>
+          </aside>`;
+          box.querySelectorAll("[data-flag]").forEach((b) => b.addEventListener("click", () => {
+            const act = b.getAttribute("data-flag");
+            if (act === "warn") { setFlagState({ status: "warned", badge: st.badge }); MTB.toast("Warning sent to Silverloom Exports."); }
+            else if (act === "badge") { setFlagState({ status: "badge-removed", badge: false }); MTB.toast("Verified badge removed from Silverloom Exports."); }
+            else if (act === "block") {
+              const ids = MTB.getBlocked();
+              if (!ids.includes("u14")) ids.push("u14");
+              MTB.setBlocked(ids);
+              setFlagState({ status: "blocked", badge: false });
+              MTB.toast("Silverloom Exports has been blocked.");
+            } else if (act === "restore") {
+              MTB.setBlocked(MTB.getBlocked().filter((id) => id !== "u14"));
+              setFlagState({ status: "open", badge: true });
+              MTB.toast("Flag reset for the demo.");
+            }
+            draw();
+          }));
+        }
         function draw() {
           kpis();
+          renderFlag();
           document.getElementById("panel").innerHTML = views[tab]();
           document.querySelectorAll("[data-block]").forEach((b) => b.addEventListener("click", () => {
             const ids = MTB.getBlocked();
