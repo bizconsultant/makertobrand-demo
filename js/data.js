@@ -14,6 +14,7 @@ window.MTB_DATA = {
       "Post custom production briefs and compare quotes",
       "Payments held until delivery",
       "GST invoices, tracking and one-click re-orders",
+      "QC service included for brand subscribers",
       "No commission or platform fee at checkout"
     ]
   },
@@ -941,6 +942,8 @@ window.MTB_DATA = {
       commission: 0,
       status: "held",
       statusLabel: "Payment held · in production",
+      qc: true,
+      qcStage: "inline",
       placed: "8 Nov 2026",
       eta: "24 Nov 2026"
     },
@@ -960,6 +963,8 @@ window.MTB_DATA = {
       commission: 7650,
       status: "released",
       statusLabel: "Delivered · payment released",
+      qc: true,
+      qcStage: "complete",
       placed: "14 Oct 2026",
       eta: "5 Nov 2026"
     },
@@ -981,6 +986,8 @@ window.MTB_DATA = {
       commission: 0,
       status: "deposit",
       statusLabel: "Deposit held · balance on delivery",
+      qc: true,
+      qcStage: "fabric",
       placed: "12 Nov 2026",
       eta: "10 Feb 2027"
     },
@@ -999,7 +1006,9 @@ window.MTB_DATA = {
       makerPayout: 240560,
       commission: 7440,
       status: "inspection",
-      statusLabel: "Packed · inspection pending",
+      statusLabel: "Packed · QC by MakerToBrand in progress",
+      qc: true,
+      qcStage: "final",
       placed: "2 Nov 2026",
       eta: "26 Nov 2026"
     }
@@ -1070,6 +1079,106 @@ window.MTB_DATA = {
       ]
     }
   ],
+
+  // =============================================================================
+  // FOUNDERS / OWNERS + QC SERVICE — placeholder content.
+  // Swap the real owners' names, roles, short bios (~60 words), photographs and
+  // LinkedIn URLs in `founders` below. Keep mission and trust points here too,
+  // so about.html does not hard-code personal details. QC copy for the service
+  // page, homepage and sample reports also lives in this block.
+  // =============================================================================
+  founders: [
+    {
+      id: "owner-1",
+      name: "Founder Name",
+      role: "Co-owner",
+      photo: "images/founder-placeholder-1.svg",
+      linkedin: "#",
+      bio: "Replace this biography with the first owner's story. Placeholder: more than two decades alongside apparel brands, from sampling rooms to fashion shoots, watching how labels brief factories and where quality is won or lost. The aim is a marketplace a brand can trust with its name on the garment. Edit this paragraph when the real biography is ready."
+    },
+    {
+      id: "owner-2",
+      name: "Founder Name",
+      role: "Co-owner",
+      photo: "images/founder-placeholder-2.svg",
+      linkedin: "#",
+      bio: "Replace this biography with the second owner's story. Placeholder: a career on the manufacturing side — pattern rooms, fabric yards and finishing lines in India's apparel hubs — with a clear view of what a clean shipment takes. This owner helps factories show their work, and helps brands receive it as briefed. Edit this paragraph when the real biography is ready."
+    }
+  ],
+  aboutStory: {
+    eyebrow: "The owners",
+    headline: "A marketplace run by people who have sat on both sides of the table.",
+    story: "MakerToBrand is owned and run by two people. This page is a placeholder until their names, photographs and stories are confirmed — then everything can be updated in one place. The idea is simple: brands should be able to find a factory, place an order, and know that someone is watching the work on their behalf, from the pattern sheet to the fabric on the line."
+  },
+  trustPoints: [
+    { title: "Two owners, one standard.", text: "The platform is not an anonymous listing board. It is run by two owners who stay close to how a garment is briefed, made and checked." },
+    { title: "A QC team that works for the brand.", text: "A QC Master and QC Merchandisers review fabric, patterns, measurements and finishing on the factory floor, and file a photo report on the order." },
+    { title: "Money held until delivery.", text: "Payments are held on MakerToBrand and released when the goods arrive. That protection exists only for orders paid on the site." },
+    { title: "Open about what is still a draft.", text: "Founder names and portraits on this page are clearly marked as placeholders, so a client can see the shape of the page before the real details are dropped in." }
+  ],
+  qcService: {
+    includedNote: "QC service included for brand subscribers",
+    headline: "Your QC team on the factory floor.",
+    lead: "MakerToBrand provides its own quality team — a QC Master and QC Merchandisers — who work on behalf of the brand. They check production quality, the pattern sheet, the measurements and that the right fabric is used, then leave a photo report on the order.",
+    team: [
+      { role: "QC Master", text: "Leads the programme. Signs off the approved fabric, the size set and the final inspection before a shipment is allowed to leave." },
+      { role: "QC Merchandiser", text: "On the factory floor for inline checks: measurements against the spec sheet, stitching, finishing, and photographs that both sides can see on the order." }
+    ],
+    steps: [
+      { num: "01", title: "Fabric approval", text: "Composition, GSM, hand and shade are checked against the approved swatch or brief before bulk cutting begins." },
+      { num: "02", title: "Pattern and measurement check", text: "The pattern sheet and a size set are measured against the brand's spec. Tolerances are agreed in writing." },
+      { num: "03", title: "Inline production inspection", text: "A merchandiser walks the line during production — seams, measurements, trims and workmanship — and flags issues early." },
+      { num: "04", title: "Final inspection before dispatch", text: "A last AQL inspection is done on the packed goods before they leave the factory." },
+      { num: "05", title: "QC report with photos", text: "A written report, with measurements and photographs, is attached to the order so the brand and the factory see the same record." }
+    ],
+    sampleReports: {
+      fabric: {
+        title: "Fabric approval — in progress",
+        summary: "The QC Master has scheduled a fabric check against the approved swatch before cutting.",
+        items: [
+          { label: "Fabric GSM", result: "Pending", detail: "To be checked against the approved swatch and brief." },
+          { label: "Measurements vs spec sheet", result: "Pending", detail: "Size set not yet on the table." },
+          { label: "Stitching", result: "Not started", detail: "Inline inspection follows after cutting." },
+          { label: "AQL result", result: "Not started", detail: "Final inspection is done before dispatch." },
+          { label: "Photos", result: "Pending", detail: "Swatch and line photographs will appear here." }
+        ]
+      },
+      inline: {
+        title: "Inline production inspection — in progress",
+        summary: "A QC Merchandiser is on the line. Fabric has been approved; measurements and stitching are being checked.",
+        items: [
+          { label: "Fabric GSM", result: "Pass", detail: "180 GSM organic combed cotton, matches the approved swatch." },
+          { label: "Measurements vs spec sheet", result: "In check", detail: "Chest and length within tolerance on the sampled size set; remaining sizes in progress." },
+          { label: "Stitching", result: "In check", detail: "Shoulder and side seams reviewed on the first 50 pieces." },
+          { label: "AQL result", result: "Pending", detail: "Final inspection is scheduled before dispatch." },
+          { label: "Photos", result: "Attached", detail: "Line photographs are on this report." }
+        ]
+      },
+      final: {
+        title: "Final inspection — in review",
+        summary: "Goods are packed. The QC Master is completing the final inspection before dispatch, on behalf of the brand.",
+        items: [
+          { label: "Fabric GSM", result: "Pass", detail: "180 GSM, shade and hand match the approved lot." },
+          { label: "Measurements vs spec sheet", result: "Pass", detail: "Size set within the agreed tolerance on chest, length, sleeve and shoulder." },
+          { label: "Stitching", result: "Pass", detail: "Seams, bartacks and neck finish meet the brief. Two minor loose threads trimmed on the line." },
+          { label: "AQL result", result: "AQL 2.5 · accepted", detail: "Sampled cartons passed. Ready for dispatch pending the brand's view of this report." },
+          { label: "Photos", result: "Attached", detail: "Measurement, stitching and packed-carton photographs are below." }
+        ]
+      },
+      complete: {
+        title: "QC report — complete",
+        summary: "Final inspection was signed off by the QC Master before dispatch. The shipment left with this report on the order.",
+        items: [
+          { label: "Fabric GSM", result: "Pass", detail: "Matches the approved swatch and the brief." },
+          { label: "Measurements vs spec sheet", result: "Pass", detail: "Graded measurements within tolerance across the size set." },
+          { label: "Stitching", result: "Pass", detail: "Workmanship accepted. No critical defects in the sample." },
+          { label: "AQL result", result: "AQL 2.5 · accepted", detail: "Signed off by the QC Master, MakerToBrand." },
+          { label: "Photos", result: "Attached", detail: "The photo record from inspection is kept with this order." }
+        ]
+      }
+    },
+    reportPhotos: ["images/textile-close.jpg", "images/sewing-hands.jpg", "images/factory-sew.jpg", "images/workshop-wide.jpg"]
+  },
   personas: {
     brand: { role: "brand", name: "Nila Atelier", city: "Mumbai", plan: "Brand" },
     manufacturer: { role: "manufacturer", name: "Loom & Lattice", city: "Tiruppur", plan: "Premium", makerId: "loom-lattice" },

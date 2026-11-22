@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About the owners · MakerToBrand</title>
+  <meta name="description" content="MakerToBrand is run by two owners. Meet the founders — names, photographs and biographies are placeholders until the real details are added.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main class="page-pad">
+    <div class="wrap page-intro" style="text-align:center">
+      <span class="eyebrow ink" id="about-eyebrow">The owners</span>
+      <h1 id="about-headline">A marketplace run by two owners.</h1>
+      <p class="lead" id="about-story" style="margin:12px auto 0">MakerToBrand is owned and run by two people. Their names and stories on this page are placeholders, ready to be replaced.</p>
+    </div>
+    <div class="wrap-wide">
+      <p class="placeholder-note">Founder names, photographs, roles, short biographies and LinkedIn links are placeholders. When the real owners' details are ready, update the clearly marked founders block in js/data.js — this page will change with it.</p>
+      <div class="founder-grid" id="founder-grid"></div>
+    </div>
+    <section>
+      <div class="wrap">
+        <span class="eyebrow ink">Why you can trust this house</span>
+        <h2 style="margin-bottom:20px">Built to be stood behind, not just listed.</h2>
+        <div class="stay-grid" id="trust-points"></div>
+      </div>
+    </section>
+    <section style="padding-top:0">
+      <div class="wrap" style="text-align:center">
+        <span class="eyebrow ink">Quality, on your behalf</span>
+        <h2 style="max-width:16ch;margin:0 auto 16px">A QC team that works for the brand.</h2>
+        <p class="muted" style="margin:0 auto 24px;max-width:36rem">The owners put a QC Master and QC Merchandisers on the factory floor, to check fabric, patterns, measurements and finishing before a shipment leaves.</p>
+        <a class="btn btn-dark" href="qc.html">See how quality control works</a>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+        MTB.init({
+      page: "about",
+      after() {
+        const story = MTB_DATA.aboutStory || {};
+        if (story.eyebrow) document.getElementById("about-eyebrow").textContent = story.eyebrow;
+        if (story.headline) document.getElementById("about-headline").textContent = story.headline;
+        if (story.story) document.getElementById("about-story").textContent = story.story;
+        document.getElementById("founder-grid").innerHTML = (MTB_DATA.founders || []).map((f) => MTB.founderCard(f)).join("");
+        document.getElementById("trust-points").innerHTML = (MTB_DATA.trustPoints || []).map((p, i) =>
+          `<article class="stay-card"><div class="stay-num">0${i+1}</div><h3>${MTB.escapeHtml(p.title)}</h3><p>${MTB.escapeHtml(p.text)}</p></article>`
+        ).join("");
+      }
+    });
+
+  </script>
+</body>
+</html>

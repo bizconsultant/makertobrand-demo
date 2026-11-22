@@ -115,6 +115,31 @@
       </div>
     </section>
 
+
+    <section class="qc-home" id="qc-home">
+      <div class="wrap-wide qc-home-grid">
+        <div class="qc-home-visual">
+          <img src="images/workshop-wide.jpg" alt="Hands finishing a garment on the production table">
+        </div>
+        <div>
+          <span class="eyebrow ink">Quality control</span>
+          <h2>Your QC team on the factory floor.</h2>
+          <p class="lead">The platform puts its own people in the unit, working on behalf of the brand: a QC Master, and QC Merchandisers who check production quality, the pattern sheet, the measurements and that the right fabric is used.</p>
+          <p class="qc-included" style="margin-bottom:18px">QC service included for brand subscribers</p>
+          <div class="qc-home-points">
+            <div><b>01</b><span>Fabric approval before cutting</span></div>
+            <div><b>02</b><span>Pattern and measurement check</span></div>
+            <div><b>03</b><span>Inline inspection on the line</span></div>
+            <div><b>04</b><span>Final inspection and a photo report</span></div>
+          </div>
+          <div class="hero-actions" style="margin-top:22px">
+            <a class="btn btn-dark" href="qc.html">See how the QC team works</a>
+            <a class="btn btn-ghost" href="order.html?id=MTB-1794">Open a sample QC report</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="hubs">
       <div class="wrap-wide">
         <span class="eyebrow">Production map</span>
@@ -186,7 +211,7 @@
           <article class="stay-card">
             <div class="stay-num">05</div>
             <h3>Useful extras, on-site only.</h3>
-            <p>GST invoices, order tracking, optional quality inspection, shipping and one-click re-orders come only with payments made through the site.</p>
+            <p>GST invoices, order tracking, QC by MakerToBrand, shipping and one-click re-orders come only with payments made through the site.</p>
           </article>
           <article class="stay-card">
             <div class="stay-num">06</div>
@@ -221,6 +246,21 @@
             <cite>Coast &amp; Cotton, Bengaluru</cite>
           </div>
         </div>
+      </div>
+    </section>
+
+
+    <section id="founders-teaser">
+      <div class="wrap-wide">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow ink">The owners</span>
+            <h2>Meet the founders.</h2>
+          </div>
+          <a class="btn btn-ghost" href="about.html">Read about the owners</a>
+        </div>
+        <p class="muted" style="max-width:40rem;margin:-16px 0 28px">MakerToBrand is run by two owners. The names and portraits here are placeholders, so the real details can be dropped in when they are ready.</p>
+        <div class="founder-teaser-grid" id="founder-teaser"></div>
       </div>
     </section>
 
@@ -265,6 +305,7 @@
         document.getElementById("hub-list").innerHTML = MTB_DATA.hubs.map((h) =>
           `<a class="hub-item" href="manufacturers.html?city=${encodeURIComponent(h.city)}"><b>${h.city}</b><span>${h.state} · ${h.focus}</span></a>`
         ).join("");
+        document.getElementById("founder-teaser").innerHTML = (MTB_DATA.founders || []).map((f) => MTB.founderCard(f, true)).join("");
       }
     });
 

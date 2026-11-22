@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Order · MakerToBrand</title>
-  <meta name="description" content="Order confirmation. Payment is shown as held securely until delivery, with on-site extras.">
+  <meta name="description" content="Order confirmation. Payment is held until delivery, with a QC by MakerToBrand report on the order.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -49,6 +49,7 @@
             <h1>Thank you. The amount is safe.</h1>
             <p class="lead" style="margin:0 auto 16px">Order <strong>${order.id}</strong> is confirmed. ${MTB.inr(order.total)} is held until delivery${maker ? " from " + MTB.escapeHtml(maker.name) : ""}. This protection applies only because the order was paid on MakerToBrand. Nothing was actually charged — this is a demo.</p>
             ${MTB.protectBadge()}
+            ${order.qc !== false ? MTB.qcBadge() : ""}
           </div>
           <div class="escrow-callout" style="text-align:left;margin:0 0 28px">
             <h3>${order.statusLabel || "Payment held"}</h3>
@@ -61,7 +62,7 @@
                 ${step("placed", "Order placed", order.placed || "Today")}
                 ${step("held", "Payment held on MakerToBrand", "Released only on delivery · Razorpay")}
                 ${step("production", "In production", maker ? maker.name : "Manufacturer confirmed")}
-                ${step("inspection", "Optional quality inspection", status === "inspection" ? "Requested — awaiting report" : "Available on this on-site order")}
+                ${step("inspection", "QC by MakerToBrand", status === "inspection" ? "Final inspection in review — report below" : status === "released" ? "Report signed off before dispatch" : "Included for brand subscribers")}
                 ${step("delivered", "Shipped / delivered", order.eta ? "Expected " + order.eta : "Date to follow")}
                 ${step("released", "Payment released to the factory", status === "released" ? "Released after delivery was confirmed" : "After you confirm receipt")}
               </ul>
@@ -69,11 +70,12 @@
             <aside>
               <div class="sticky-card" style="position:relative;top:0">
                 <span class="badge badge-held">On-site extras</span>
+                ${order.qc !== false ? MTB.qcBadge() : ""}
                 <h3 style="font-size:26px;margin:8px 0 8px">Included only for orders paid here.</h3>
-                <p class="muted">A private deal would not receive these.</p>
+                <p class="muted">A private deal would not receive these. QC by MakerToBrand is included for brand subscribers.</p>
                 <div class="form-grid" style="margin-top:12px">
                   <a class="btn btn-dark btn-block" href="invoice.html?id=${encodeURIComponent(order.id)}">Download GST invoice</a>
-                  <button class="btn btn-ghost btn-block" type="button" id="inspect">Request quality inspection</button>
+                  <a class="btn btn-ghost btn-block" href="#qc-report">Open the QC report</a>
                   <button class="btn btn-ghost btn-block" type="button" id="reorder">One-click re-order</button>
                   <a class="btn btn-ghost btn-block" href="dashboard-brand.html">Back to dashboard</a>
                   <a class="btn btn-ghost btn-block" href="messages.html">Message the manufacturer</a>
@@ -87,13 +89,11 @@
               <p>Tracked dispatch arranged through the order. Both sides see the same milestones above.</p>
             </div>
             <div class="extra-card">
-              <h3>Quality inspection</h3>
-              <p>Optional, before payment is released. Available because this order was paid on the site.</p>
+              <h3>QC by MakerToBrand</h3>
+              <p>A QC Master and merchandisers check fabric, the pattern sheet, measurements and finishing on behalf of the brand. Included for brand subscribers.</p>
             </div>
-          </div>`;
-        document.getElementById("inspect").addEventListener("click", () => {
-          MTB.toast("Quality inspection requested on this on-site order (demo).");
-        });
+          </div>
+          ${order.qc !== false ? MTB.qcReportHtml(order) : ""}`;
         document.getElementById("reorder").addEventListener("click", () => {
           if (order.productId && product) {
             MTB.addToCart({ id: product.id, qty: order.qty || product.moq, color: (product.colors||[])[0], size: (product.sizes||[])[0], name: product.name, image: product.images[0], makerId: product.makerId, moq: product.moq });

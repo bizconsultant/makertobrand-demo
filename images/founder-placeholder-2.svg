@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-label="Photo placeholder for the second owner">
+  <rect width="400" height="500" fill="#3A1F1C"/>
+  <circle cx="200" cy="188" r="72" fill="#F7F2EB"/>
+  <path d="M86 500 C90 338 310 338 314 500 Z" fill="#F7F2EB"/>
+  <text x="200" y="36" text-anchor="middle" fill="#C4A35A" font-family="Georgia, serif" font-size="11" letter-spacing="2.4">PHOTO PLACEHOLDER</text>
+</svg>

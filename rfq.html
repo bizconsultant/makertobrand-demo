@@ -54,7 +54,9 @@
               <aside>
                 <div class="sticky-card">
                   <h3 style="font-size:24px;margin-bottom:8px">How acceptance works</h3>
-                  <p class="muted">Accept a quote, then pay a deposit through a demo payment. The remainder is due on delivery, and both amounts are held until then. That holding — and the factory’s guaranteed payout — apply only to deposits paid on MakerToBrand. Brands pay the quoted price only; there is no fee at checkout.</p>
+                  <p class="muted">Accept a quote, then pay a deposit through a demo payment. The remainder is due on delivery, and both amounts are held until then. Brands pay the quoted price only; there is no fee at checkout.</p>
+                  <p class="qc-included" style="margin-top:12px">${MTB.qcBadge()} QC service included for brand subscribers — fabric, pattern, measurements and a final inspection on your behalf.</p>
+                  <p style="margin-top:8px"><a href="qc.html">How the QC team works</a></p>
                   <a class="btn btn-ghost btn-block" href="messages.html">Open messages</a>
                 </div>
               </aside>
@@ -75,6 +77,7 @@
                 </div>
                 <div class="amount">${MTB.inr(q.price)} <span style="font-size:14px;font-family:var(--font-sans)">/ pc</span></div>
                 <p class="muted">Line ${MTB.inr(line)} · ${q.lead} · ${q.deposit}% deposit (${MTB.inr(deposit)})</p>
+                <p style="margin-top:8px">${MTB.qcBadge()} <span class="muted">Included for brand subscribers</span></p>
                 ${isMaker ? (function(){ const f = MTB.feeFor(line, m); return `<p class="muted">${f.feeWaived ? "Your payout: " + MTB.inr(f.makerPayout) + " · waived, Premium" : "3% platform fee " + MTB.inr(f.fee) + " · you receive " + MTB.inr(f.makerPayout)}</p>`; })() : ""}
                 <p>${MTB.escapeHtml(q.note)}</p>
                 ${isAcc ? `<span class="badge badge-ok">Accepted</span> <a class="btn btn-gold btn-sm" href="order.html?id=MTB-1810" style="margin-top:10px">View the order</a>` :
@@ -173,6 +176,7 @@
               platformFee: MTB.feeFor(line, m).fee, feeWaived: MTB.feeFor(line, m).feeWaived,
               brandPays: line, makerPayout: MTB.feeFor(line, m).makerPayout,
               commission: MTB.feeFor(line, m).fee,
+              qc: true, qcStage: "fabric",
               status: "deposit", statusLabel: "Deposit held · balance on delivery",
               placed: "22 Nov 2026", eta: r.deadline
             };

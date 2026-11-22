@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quality control · MakerToBrand</title>
+  <meta name="description" content="MakerToBrand provides a QC Master and QC Merchandisers who check fabric, patterns, measurements and finishing on behalf of brands.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main>
+    <section class="qc-hero">
+      <div class="qc-hero-copy">
+        <span class="eyebrow">Quality control · for brands</span>
+        <h1>Your QC team on the factory floor.</h1>
+        <p class="lead" id="qc-lead">A QC Master and QC Merchandisers work on behalf of the brand: production quality, the pattern sheet, correct measurements, and the right fabric.</p>
+        <p class="qc-included" id="qc-included">QC service included for brand subscribers</p>
+        <div class="hero-actions">
+          <a class="btn btn-gold" href="custom.html">Start a custom order</a>
+          <a class="btn btn-ghost hero-ghost" href="how-it-works.html#qc">How it fits the process</a>
+        </div>
+      </div>
+      <div class="qc-hero-visual">
+        <img src="images/workshop-wide.jpg" alt="Hands finishing a garment on the production table">
+      </div>
+    </section>
+    <section>
+      <div class="wrap-wide">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow ink">The team</span>
+            <h2>A master, and merchandisers on the line.</h2>
+          </div>
+          <p>They do not work for the factory. They work for the brand that placed the order, and they leave a written report — with photographs — on that order.</p>
+        </div>
+        <div class="qc-team" id="qc-team"></div>
+      </div>
+    </section>
+    <section style="padding-top:0" id="steps">
+      <div class="wrap-wide">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow ink">How it works</span>
+            <h2>From the fabric table to the packed carton.</h2>
+          </div>
+        </div>
+        <div class="qc-steps" id="qc-steps"></div>
+      </div>
+    </section>
+    <section class="qc-sample-band">
+      <div class="wrap">
+        <span class="eyebrow ink">On the order</span>
+        <h2>Every check leaves a report the brand can open.</h2>
+        <p class="lead">Fabric GSM, measurements against the spec sheet, stitching, an AQL result, and photographs. Open a sample order to see a mock report in place.</p>
+        <a class="btn btn-dark" href="order.html?id=MTB-1794">View a sample QC report</a>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+        MTB.init({
+      page: "qc",
+      after() {
+        const qc = MTB_DATA.qcService || {};
+        if (qc.lead) document.getElementById("qc-lead").textContent = qc.lead;
+        if (qc.includedNote) document.getElementById("qc-included").textContent = qc.includedNote;
+        document.getElementById("qc-team").innerHTML = (qc.team || []).map((m) =>
+          `<article class="qc-team-card"><h3>${MTB.escapeHtml(m.role)}</h3><p>${MTB.escapeHtml(m.text)}</p></article>`
+        ).join("");
+        document.getElementById("qc-steps").innerHTML = (qc.steps || []).map((s) =>
+          `<article class="qc-step"><div class="step-num">${s.num}</div><div><h3>${MTB.escapeHtml(s.title)}</h3><p class="muted">${MTB.escapeHtml(s.text)}</p></div></article>`
+        ).join("");
+      }
+    });
+
+  </script>
+</body>
+</html>

@@ -147,7 +147,8 @@
       { href: "stock.html", id: "stock", label: "Ready-made" },
       { href: "custom.html", id: "custom", label: "Custom orders" },
       { href: "pricing.html", id: "pricing", label: "Memberships" },
-      { href: "how-it-works.html", id: "how", label: "How it works" }
+      { href: "how-it-works.html", id: "how", label: "How it works" },
+      { href: "about.html", id: "about", label: "About" }
     ];
     let account;
     if (!s) {
@@ -205,6 +206,8 @@
           </div>
           <div>
             <h4>Platform</h4>
+            <a href="about.html">About the owners</a>
+            <a href="qc.html">Quality control</a>
             <a href="how-it-works.html">How it works</a>
             <a href="how-it-works.html#payments">Payments &amp; escrow</a>
             <a href="how-it-works.html#safety">Trade safely</a>
@@ -435,9 +438,68 @@
     </a>`;
   }
 
+
+  function linkedinIcon() {
+    return `<svg class="li-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7.2 10.2V17M7.2 7.2v.04M11.2 17v-4.1c0-1.2.8-2 1.9-2s1.9.8 1.9 2V17" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`;
+  }
+  function qcBadge() {
+    return `<span class="badge badge-qc">QC by MakerToBrand</span>`;
+  }
+  function qcReportHtml(order) {
+    const qc = MTB_DATA.qcService || {};
+    const stage = (order && order.qcStage) || (order && order.status === "inspection" ? "final" : order && order.status === "released" ? "complete" : "inline");
+    const report = (qc.sampleReports || {})[stage] || (qc.sampleReports || {}).final;
+    const photos = qc.reportPhotos || [];
+    const showPhotos = stage === "inline" || stage === "final" || stage === "complete";
+    if (!report) return "";
+    const items = report.items.map((it) => {
+      const cls = /pass|accepted/i.test(it.result) ? "is-pass" : /pending|not started|in check|in progress/i.test(it.result) ? "is-wait" : "";
+      return `<tr class="${cls}"><th>${escapeHtml(it.label)}</th><td><strong>${escapeHtml(it.result)}</strong><div class="muted">${escapeHtml(it.detail)}</div></td></tr>`;
+    }).join("");
+    const pics = showPhotos ? `<div class="qc-photos">${photos.map((src, i) => `<figure><img src="${src}" alt="QC photograph ${i+1} (sample)"></figure>`).join("")}</div>` : "";
+    return `<section class="qc-report" id="qc-report">
+      <div class="qc-report-head">
+        ${qcBadge()}
+        <h2>${escapeHtml(report.title)}</h2>
+        <p class="muted">${escapeHtml(report.summary)} ${escapeHtml(qc.includedNote || "QC service included for brand subscribers")}.</p>
+        <p class="muted">Signed for the brand by the QC Master, MakerToBrand. This is a sample report for the demo.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="data qc-table">
+          <thead><tr><th>Check</th><th>Result</th></tr></thead>
+          <tbody>${items}</tbody>
+        </table>
+      </div>
+      ${pics}
+      <p style="margin-top:16px"><a class="btn btn-ghost btn-sm" href="qc.html">How the QC team works</a></p>
+    </section>`;
+  }
+  function founderCard(f, compact) {
+    const li = `<a class="li-link" href="${escapeHtml(f.linkedin || "#")}" aria-label="LinkedIn profile for ${escapeHtml(f.name)} (placeholder)">${linkedinIcon()} <span>LinkedIn</span></a>`;
+    if (compact) {
+      return `<a class="founder-teaser" href="about.html">
+        <div class="founder-photo"><img src="${f.photo}" alt="Photo placeholder for ${escapeHtml(f.name)}"></div>
+        <div>
+          <h3>${escapeHtml(f.name)}</h3>
+          <p class="muted">${escapeHtml(f.role)}</p>
+        </div>
+      </a>`;
+    }
+    return `<article class="founder-card">
+      <div class="founder-photo"><img src="${f.photo}" alt="Photo placeholder for ${escapeHtml(f.name)}"></div>
+      <div class="founder-body">
+        <span class="eyebrow ink">Owner</span>
+        <h2>${escapeHtml(f.name)}</h2>
+        <p class="founder-role">${escapeHtml(f.role)}</p>
+        <p>${escapeHtml(f.bio)}</p>
+        ${li}
+      </div>
+    </article>`;
+  }
+
   window.MTB = {
     init, inr, param, getSession, setSession, getCart, setCart, addToCart,
     maker, product, rfq, allRfqs, allOrders, getExtraRfqs, getBlocked, setBlocked,
-    tierPrice, toast, stars, escapeHtml, requireRole, makerCard, productCard, partnerOrders, hasPaidOrderWith, loyaltyRate, pct, sellerFeeRate, feeFor, cartMerchandise, cartFeeBreakdown, inDelhiNcr, makerMatchesCategory, makerMatchesQuery, KEY, $, $$
+    tierPrice, toast, stars, escapeHtml, requireRole, makerCard, productCard, partnerOrders, hasPaidOrderWith, loyaltyRate, pct, sellerFeeRate, feeFor, cartMerchandise, cartFeeBreakdown, inDelhiNcr, makerMatchesCategory, makerMatchesQuery, makerContacts, maskContact, contactUnlocked, protectBadge, qcBadge, qcReportHtml, founderCard, linkedinIcon, KEY, $, $$
   };
 })();
