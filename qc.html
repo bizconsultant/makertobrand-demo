@@ -30,6 +30,9 @@
         <img src="images/workshop-wide.jpg" alt="Hands finishing a garment on the production table">
       </div>
     </section>
+    <section class="qc-std-section" id="qc-standard-wrap">
+      <div class="wrap-wide" id="qc-standard-slot"></div>
+    </section>
     <section>
       <div class="wrap-wide">
         <div class="section-head">
@@ -73,6 +76,7 @@
         const qc = MTB_DATA.qcService || {};
         if (qc.lead) document.getElementById("qc-lead").textContent = qc.lead;
         if (qc.includedNote) document.getElementById("qc-included").textContent = qc.includedNote;
+        document.getElementById("qc-standard-slot").innerHTML = MTB.qcStandardHtml({ href: "#steps" });
         document.getElementById("qc-team").innerHTML = (qc.team || []).map((m) =>
           `<article class="qc-team-card"><h3>${MTB.escapeHtml(m.role)}</h3><p>${MTB.escapeHtml(m.text)}</p></article>`
         ).join("");

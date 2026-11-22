@@ -1116,6 +1116,17 @@ window.MTB_DATA = {
   qcService: {
     includedNote: "QC service included for brand subscribers",
     headline: "Your QC team on the factory floor.",
+    standard: {
+      eyebrow: "Service standard",
+      title: "Our QC service standard",
+      intro: "The platform's QC team — a QC Master and QC Merchandisers — takes care of these checks on behalf of the brand.",
+      points: [
+        { id: "quality", title: "Production quality", line: "Workmanship and finishing are inspected on the factory floor, for the brand." },
+        { id: "pattern", title: "Pattern sheet checks", line: "The pattern sheet is reviewed and signed off before bulk cutting." },
+        { id: "measure", title: "Correct measurements vs spec", line: "A size set is measured against the brand's specification sheet." },
+        { id: "fabric", title: "The right fabric used", line: "Fabric is approved so the correct cloth, weight and shade go into production." }
+      ]
+    },
     lead: "MakerToBrand provides its own quality team — a QC Master and QC Merchandisers — who work on behalf of the brand. They check production quality, the pattern sheet, the measurements and that the right fabric is used, then leave a photo report on the order.",
     team: [
       { role: "QC Master", text: "Leads the programme. Signs off the approved fabric, the size set and the final inspection before a shipment is allowed to leave." },

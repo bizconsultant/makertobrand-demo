@@ -23,6 +23,9 @@
     <div class="wrap-wide">
       <div class="founder-grid" id="founder-grid"></div>
     </div>
+    <section class="qc-std-section" id="qc-standard-wrap">
+      <div class="wrap-wide" id="qc-standard-slot"></div>
+    </section>
     <section>
       <div class="wrap">
         <span class="eyebrow ink">Why you can trust this house</span>
@@ -52,6 +55,7 @@
         if (story.headline) document.getElementById("about-headline").textContent = story.headline;
         if (story.story) document.getElementById("about-story").textContent = story.story;
         document.getElementById("founder-grid").innerHTML = (MTB_DATA.founders || []).map((f) => MTB.founderCard(f)).join("");
+        document.getElementById("qc-standard-slot").innerHTML = MTB.qcStandardHtml({ href: "qc.html" });
         document.getElementById("trust-points").innerHTML = (MTB_DATA.trustPoints || []).map((p, i) =>
           `<article class="stay-card"><div class="stay-num">0${i+1}</div><h3>${MTB.escapeHtml(p.title)}</h3><p>${MTB.escapeHtml(p.text)}</p></article>`
         ).join("");

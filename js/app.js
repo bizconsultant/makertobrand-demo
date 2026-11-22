@@ -496,9 +496,43 @@
     </article>`;
   }
 
+
+  function qcStandardIcons() {
+    return {
+      quality: `<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.5 16.5 l3.4 3.4 7.6-8.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+      pattern: `<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="6" width="18" height="20" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M11 11h10M11 16h10M11 21h6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="22.5" cy="21" r="1.3" fill="currentColor"/></svg>`,
+      measure: `<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 22 L22 6 l4 4 L10 26 Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M10 18l2 2M13 15l2 2M16 12l2 2M19 9l2 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`,
+      fabric: `<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 10c4 3 12 3 16 0v13c-4 3-12 3-16 0V10Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 16.5c4 3 12 3 16 0" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>`
+    };
+  }
+  function qcStandardHtml(opts) {
+    const std = (MTB_DATA.qcService && MTB_DATA.qcService.standard) || {};
+    const icons = qcStandardIcons();
+    const linkHref = (opts && opts.href) || "qc.html";
+    const linkLabel = (opts && opts.linkLabel) || "See how QC works";
+    const points = (std.points || []).map((pt) =>
+      `<article class="qc-std-card">
+        <div class="qc-std-icon">${icons[pt.id] || icons.quality}</div>
+        <h3>${escapeHtml(pt.title)}</h3>
+        <p>${escapeHtml(pt.line)}</p>
+      </article>`
+    ).join("");
+    return `<div class="qc-standard" id="qc-standard">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow ink">${escapeHtml(std.eyebrow || "Service standard")}</span>
+          <h2>${escapeHtml(std.title || "Our QC service standard")}</h2>
+        </div>
+        <p>${escapeHtml(std.intro || "")}</p>
+      </div>
+      <div class="qc-std-grid">${points}</div>
+      <p class="qc-std-link"><a class="btn btn-ghost" href="${escapeHtml(linkHref)}">${escapeHtml(linkLabel)}</a></p>
+    </div>`;
+  }
+
   window.MTB = {
     init, inr, param, getSession, setSession, getCart, setCart, addToCart,
     maker, product, rfq, allRfqs, allOrders, getExtraRfqs, getBlocked, setBlocked,
-    tierPrice, toast, stars, escapeHtml, requireRole, makerCard, productCard, partnerOrders, hasPaidOrderWith, loyaltyRate, pct, sellerFeeRate, feeFor, cartMerchandise, cartFeeBreakdown, inDelhiNcr, makerMatchesCategory, makerMatchesQuery, makerContacts, maskContact, contactUnlocked, protectBadge, qcBadge, qcReportHtml, founderCard, linkedinIcon, KEY, $, $$
+    tierPrice, toast, stars, escapeHtml, requireRole, makerCard, productCard, partnerOrders, hasPaidOrderWith, loyaltyRate, pct, sellerFeeRate, feeFor, cartMerchandise, cartFeeBreakdown, inDelhiNcr, makerMatchesCategory, makerMatchesQuery, makerContacts, maskContact, contactUnlocked, protectBadge, qcBadge, qcReportHtml, founderCard, linkedinIcon, qcStandardHtml, KEY, $, $$
   };
 })();
