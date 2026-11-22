@@ -66,15 +66,21 @@
             <h3 style="font-size:28px;margin-bottom:12px">Order</h3>
             ${lines}
             <div class="summary-row total"><span>To be held</span><span>${MTB.inr(sub)}</span></div>
-            <p class="muted" style="margin-top:12px;font-size:13px">Commission starts at 5% for a first order together, then 3% from the second and 2% from the fifth. It is taken only when payment is released.</p>
+            <p class="muted" style="margin-top:12px;font-size:13px">You pay the product price only. There is no commission or platform fee at checkout for brands.</p>
             <p class="muted" style="font-size:13px">Off-site payments are not held, and the factory is not paid through MakerToBrand.</p>
           </aside>`;
         document.getElementById("co").addEventListener("submit", (e) => {
           e.preventDefault();
           const id = "MTB-" + (1800 + Math.floor(Math.random() * 800));
+          const fee = MTB.cartFeeBreakdown(cart);
+          const first = cart[0] ? MTB.product(cart[0].id) : null;
           const order = {
             id, type: "stock", brand: (s && s.name) || "Nila Atelier",
-            items: cart, total: sub, commission: Math.round(sub * 0.045),
+            makerId: first ? first.makerId : undefined,
+            items: cart, total: sub,
+            platformFee: fee.fee, feeWaived: fee.fee === 0,
+            brandPays: sub, makerPayout: fee.makerPayout,
+            commission: fee.fee,
             status: "held", statusLabel: "Payment held · awaiting production",
             placed: "22 Nov 2026", eta: "10 Dec 2026"
           };

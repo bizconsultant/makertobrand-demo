@@ -54,8 +54,7 @@
               <aside>
                 <div class="sticky-card">
                   <h3 style="font-size:24px;margin-bottom:8px">How acceptance works</h3>
-                  <p class="muted">Accept a quote, then pay a deposit through a demo payment. The remainder is due on delivery, and both amounts are held until then. That holding — and the factory’s guaranteed payout — apply only to deposits paid on MakerToBrand.</p>
-                  <p class="muted">Commission is 5% on a first order together, 3% from the second, 2% from the fifth.</p>
+                  <p class="muted">Accept a quote, then pay a deposit through a demo payment. The remainder is due on delivery, and both amounts are held until then. That holding — and the factory’s guaranteed payout — apply only to deposits paid on MakerToBrand. Brands pay the quoted price only; there is no fee at checkout.</p>
                   <a class="btn btn-ghost btn-block" href="messages.html">Open messages</a>
                 </div>
               </aside>
@@ -76,6 +75,7 @@
                 </div>
                 <div class="amount">${MTB.inr(q.price)} <span style="font-size:14px;font-family:var(--font-sans)">/ pc</span></div>
                 <p class="muted">Line ${MTB.inr(line)} · ${q.lead} · ${q.deposit}% deposit (${MTB.inr(deposit)})</p>
+                ${isMaker ? (function(){ const f = MTB.feeFor(line, m); return `<p class="muted">${f.feeWaived ? "Your payout: " + MTB.inr(f.makerPayout) + " · waived, Premium" : "3% platform fee " + MTB.inr(f.fee) + " · you receive " + MTB.inr(f.makerPayout)}</p>`; })() : ""}
                 <p>${MTB.escapeHtml(q.note)}</p>
                 ${isAcc ? `<span class="badge badge-ok">Accepted</span> <a class="btn btn-gold btn-sm" href="order.html?id=MTB-1810" style="margin-top:10px">View the order</a>` :
                   (acc ? "" : `<button class="btn btn-primary" data-accept="${q.id}" type="button">Accept &amp; pay deposit</button>`)}
@@ -95,9 +95,25 @@
                   </div>
                   <label class="field"><span>Deposit %</span><input name="deposit" type="number" value="35" min="20" max="60"></label>
                   <label class="field"><span>Note to the brand</span><textarea name="note" required></textarea></label>
+                  <p class="muted" id="quote-net"></p>
                   <button class="btn btn-dark" type="submit">Send quote</button>
                 </form>
               </div>`;
+            const meMaker = MTB.maker(session.makerId || "loom-lattice");
+            function previewNet() {
+              const price = Number((document.querySelector('#quote-form [name="price"]') || {}).value || 0);
+              const line = price * r.qty;
+              const el = document.getElementById("quote-net");
+              if (!el) return;
+              if (!price) { el.textContent = "Enter a unit price to see your payout after the platform fee."; return; }
+              const f = MTB.feeFor(line, meMaker);
+              el.textContent = f.feeWaived
+                ? ("Line " + MTB.inr(line) + " · platform fee waived, Premium · you receive " + MTB.inr(f.makerPayout))
+                : ("Line " + MTB.inr(line) + " · 3% platform fee " + MTB.inr(f.fee) + " · you receive " + MTB.inr(f.makerPayout));
+            }
+            const priceInp = document.querySelector('#quote-form [name="price"]');
+            if (priceInp) priceInp.addEventListener("input", previewNet);
+            previewNet();
             document.getElementById("quote-form").addEventListener("submit", (e) => {
               e.preventDefault();
               const fd = new FormData(e.target);
@@ -153,7 +169,10 @@
             const order = {
               id: orderId, type: "custom", rfqId: r.id, makerId: q.makerId,
               brand: r.brand, qty: r.qty, unit: q.price, total: line,
-              deposit, balance: line - deposit, commission: Math.round(line * 0.04),
+              deposit, balance: line - deposit,
+              platformFee: MTB.feeFor(line, m).fee, feeWaived: MTB.feeFor(line, m).feeWaived,
+              brandPays: line, makerPayout: MTB.feeFor(line, m).makerPayout,
+              commission: MTB.feeFor(line, m).fee,
               status: "deposit", statusLabel: "Deposit held · balance on delivery",
               placed: "22 Nov 2026", eta: r.deadline
             };

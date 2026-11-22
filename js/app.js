@@ -143,8 +143,8 @@
     if (!host) return;
     const page = MTB.page;
     const nav = [
+      { href: "manufacturers.html", id: "makers", label: "Find Manufacturers" },
       { href: "stock.html", id: "stock", label: "Ready-made" },
-      { href: "manufacturers.html", id: "makers", label: "Manufacturers" },
       { href: "custom.html", id: "custom", label: "Custom orders" },
       { href: "pricing.html", id: "pricing", label: "Memberships" },
       { href: "how-it-works.html", id: "how", label: "How it works" }
@@ -170,6 +170,7 @@
           ${logoSvg("#161310")}
           <span class="logo-word">Maker<em>To</em>Brand</span>
         </a>
+        <a class="find-makers-link" href="manufacturers.html">Find makers</a>
         <nav class="nav-main">
           ${nav.map((n) => `<a href="${n.href}" class="${page === n.id ? "is-active" : ""}">${n.label}</a>`).join("")}
         </nav>
@@ -197,8 +198,8 @@
           </div>
           <div>
             <h4>Marketplace</h4>
+            <a href="manufacturers.html">Find manufacturers</a>
             <a href="stock.html">Ready-made stock</a>
-            <a href="manufacturers.html">Manufacturers</a>
             <a href="custom.html">Custom production</a>
             <a href="pricing.html">Memberships</a>
           </div>
@@ -272,14 +273,76 @@
   function hasPaidOrderWith(brandName, makerId) {
     return partnerOrders(brandName, makerId).length > 0;
   }
-  function loyaltyRate(existingCount) {
-    // existingCount = orders already placed between the pair
-    // next order: 5% first, 3% from 2nd, 2% from 5th
-    if (existingCount >= 4) return 0.02;
-    if (existingCount >= 1) return 0.03;
-    return 0.05;
-  }
+  function loyaltyRate() { return 0.03; }
   function pct(rate) { return Math.round(rate * 100) + "%"; }
+  function sellerFeeRate(makerOrPlan) {
+    const plan = typeof makerOrPlan === "string" ? makerOrPlan : (makerOrPlan && makerOrPlan.plan);
+    return plan === "Premium" ? 0 : 0.03;
+  }
+  function feeFor(merchandise, makerOrPlan) {
+    const amount = Math.round(Number(merchandise) || 0);
+    const rate = sellerFeeRate(makerOrPlan);
+    const fee = Math.round(amount * rate);
+    return {
+      rate,
+      fee,
+      feeWaived: rate === 0,
+      brandPays: amount,
+      makerPayout: amount - fee,
+      label: rate === 0 ? "waived, Premium" : "3% platform fee"
+    };
+  }
+  function cartMerchandise(cart) {
+    return (cart || []).reduce((sum, item) => {
+      const p = product(item.id);
+      if (!p) return sum;
+      const unit = tierPrice(p, item.qty);
+      return sum + unit * Number(item.qty || 0);
+    }, 0);
+  }
+  function cartFeeBreakdown(cart) {
+    const groups = {};
+    (cart || []).forEach((item) => {
+      const p = product(item.id);
+      if (!p) return;
+      const m = maker(p.makerId);
+      const line = tierPrice(p, item.qty) * Number(item.qty || 0);
+      const key = p.makerId || "unknown";
+      if (!groups[key]) groups[key] = { maker: m, merchandise: 0 };
+      groups[key].merchandise += line;
+    });
+    let merchandise = 0, fee = 0, makerPayout = 0;
+    const parts = Object.keys(groups).map((key) => {
+      const g = groups[key];
+      const br = feeFor(g.merchandise, g.maker);
+      merchandise += br.brandPays;
+      fee += br.fee;
+      makerPayout += br.makerPayout;
+      return Object.assign({ makerId: key }, br, { maker: g.maker });
+    });
+    return { merchandise, fee, makerPayout, brandPays: merchandise, parts };
+  }
+  const NCR_CITIES = ["Delhi NCR", "Delhi", "Gurugram", "Noida", "Gurgaon"];
+  function inDelhiNcr(m) {
+    return NCR_CITIES.indexOf(m.city) >= 0 || m.state === "Delhi NCR" || m.state === "NCR";
+  }
+  const CATEGORY_ALIASES = {
+    "Knitwear": ["Knitwear", "Knits", "Woollens", "Sweaters", "Hoodies", "Activewear", "T-shirts"],
+    "Denim": ["Denim", "Jeans"],
+    "Ethnic wear": ["Ethnic wear", "Kurtas", "Festive", "Occasion wear", "Handloom", "Block print", "Craft"],
+    "Shirts": ["Shirts", "Shirting", "Wovens", "Linen", "Suiting"],
+    "Kidswear": ["Kidswear"],
+    "Festive": ["Festive", "Occasion wear"]
+  };
+  function makerMatchesCategory(m, cat) {
+    const aliases = CATEGORY_ALIASES[cat] || [cat];
+    return (m.categories || []).some((c) => aliases.indexOf(c) >= 0 || c === cat);
+  }
+  function makerMatchesQuery(m, q) {
+    if (!q) return true;
+    const hay = [m.name, m.city, m.state, m.tagline, m.about, (m.categories || []).join(" "), (m.materials || []).join(" ")].join(" ").toLowerCase();
+    return hay.indexOf(String(q).toLowerCase().trim()) >= 0;
+  }
   function makerContacts(m) {
     const directory = {
       "loom-lattice": { phone: "+91 421 555 0140", email: "studio@loomlattice.example", wa: "+91 98765 11001" },
@@ -375,6 +438,6 @@
   window.MTB = {
     init, inr, param, getSession, setSession, getCart, setCart, addToCart,
     maker, product, rfq, allRfqs, allOrders, getExtraRfqs, getBlocked, setBlocked,
-    tierPrice, toast, stars, escapeHtml, requireRole, makerCard, productCard, partnerOrders, hasPaidOrderWith, loyaltyRate, pct, makerContacts, maskContact, contactUnlocked, protectBadge, KEY, $, $$
+    tierPrice, toast, stars, escapeHtml, requireRole, makerCard, productCard, partnerOrders, hasPaidOrderWith, loyaltyRate, pct, sellerFeeRate, feeFor, cartMerchandise, cartFeeBreakdown, inDelhiNcr, makerMatchesCategory, makerMatchesQuery, KEY, $, $$
   };
 })();

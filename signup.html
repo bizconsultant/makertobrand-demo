@@ -24,16 +24,16 @@
         <div class="inner">
           <span class="eyebrow ink">Open sign-up</span>
           <h1>Create an account.</h1>
-          <p class="muted">This is a demo. We do not collect a password, and nothing is stored on a server — only a name and role on this device, so the dashboards work.</p>
+          <p class="muted">This is a demo. We do not collect a password, and nothing is stored on a server — only a name, role and plan on this device, so the dashboards work.</p>
           <form id="signup-form" class="form-grid" style="margin-top:24px">
             <div class="role-pick">
               <button type="button" class="role-opt is-on" data-role="brand">
                 <h3>Brand owner</h3>
-                <p>Source stock, post briefs, pay through the site.</p>
+                <p>₹2,500 a month. Source stock, post briefs, pay through the site — with no commission.</p>
               </button>
               <button type="button" class="role-opt" data-role="manufacturer">
                 <h3>Manufacturer</h3>
-                <p>List your unit, quote on work, receive orders.</p>
+                <p>List your unit, quote on work, receive orders. Choose Pro, Business or Premium.</p>
               </button>
             </div>
             <label class="field"><span>Studio or factory name</span>
@@ -46,15 +46,16 @@
               <select name="city">
                 <option>Mumbai</option><option>Delhi</option><option>Bengaluru</option>
                 <option>Jaipur</option><option>Tiruppur</option><option>Ludhiana</option>
-                <option>Surat</option><option>Gurugram</option><option>Other</option>
+                <option>Surat</option><option>Gurugram</option><option>Kolkata</option><option>Other</option>
               </select>
             </label>
+            <div id="plan-box"></div>
             <label class="agree">
               <input type="checkbox" name="fairuse" required>
               <span>I agree to keep deals on MakerToBrand, so both sides have payment protection, verified reviews and on-site extras. Moving a deal off the platform can lead to a warning, a lost verified badge, or a blocked account.</span>
             </label>
-            <div class="note-box">No password is asked for, and no payment details are taken on this screen.</div>
-            <button class="btn btn-primary btn-block" type="submit">Enter the marketplace</button>
+            <div class="note-box">No password is asked for. The membership payment on the next step is a demo only — you will not be charged.</div>
+            <button class="btn btn-primary btn-block" type="submit" id="join-btn">Continue to demo payment</button>
             <p class="muted" style="margin:0;font-size:13px">Already visiting? <a href="login.html" style="text-decoration:underline">Sign in to the demo</a></p>
           </form>
         </div>
@@ -70,25 +71,73 @@
       page: "signup",
       after() {
         let role = "brand";
+        let sellerPlan = "pro";
+        function drawPlans() {
+          const box = document.getElementById("plan-box");
+          const btn = document.getElementById("join-btn");
+          if (role === "brand") {
+            const p = MTB_DATA.brandPlan;
+            box.innerHTML = `<div class="plan-opt is-on" style="cursor:default">
+              <h3>${p.name} plan · ${MTB.inr(p.priceMonth)} / month</h3>
+              <p class="muted" style="margin:0">${p.blurb}</p>
+            </div>`;
+            btn.textContent = "Demo payment · start Brand plan " + MTB.inr(p.priceMonth) + "/month";
+          } else {
+            box.innerHTML = `<p class="muted" style="margin:0 0 8px">Choose a seller plan</p>
+              <div class="plan-pick">
+                ${MTB_DATA.plans.map((p) => `
+                  <button type="button" class="plan-opt ${p.id===sellerPlan?"is-on":""}" data-splan="${p.id}">
+                    <h3>${p.name} · ${MTB.inr(p.priceMonth)} / month</h3>
+                    <p class="muted" style="margin:0">${p.fee}</p>
+                  </button>`).join("")}
+              </div>`;
+            const chosen = MTB_DATA.plans.find((p) => p.id === sellerPlan);
+            btn.textContent = "Demo payment · start " + chosen.name + " " + MTB.inr(chosen.priceMonth) + "/month";
+            box.querySelectorAll("[data-splan]").forEach((b) => b.addEventListener("click", () => {
+              sellerPlan = b.getAttribute("data-splan");
+              drawPlans();
+            }));
+          }
+        }
         document.querySelectorAll(".role-opt").forEach((btn) => {
           btn.addEventListener("click", () => {
             role = btn.getAttribute("data-role");
             document.querySelectorAll(".role-opt").forEach((b) => b.classList.toggle("is-on", b === btn));
+            drawPlans();
           });
         });
         document.getElementById("signup-form").addEventListener("submit", (e) => {
           e.preventDefault();
           const fd = new FormData(e.target);
-          MTB.setSession({
-            role,
-            name: fd.get("name"),
-            city: fd.get("city"),
-            plan: "Free",
-            email: fd.get("email")
+          const plan = role === "brand" ? "Brand" : (MTB_DATA.plans.find((p) => p.id === sellerPlan) || {}).name;
+          const price = role === "brand" ? MTB_DATA.brandPlan.priceMonth : MTB_DATA.plans.find((p) => p.id === sellerPlan).priceMonth;
+          const overlay = document.createElement("div");
+          overlay.style.cssText = "position:fixed;inset:0;background:rgba(20,25,36,.55);z-index:90;display:flex;align-items:center;justify-content:center;padding:20px";
+          overlay.innerHTML = `<div class="summary-card" style="position:relative;top:0;max-width:440px;width:100%">
+            <h3 style="font-size:28px;margin-bottom:8px">Demo membership payment</h3>
+            <p>Start the <strong>${plan}</strong> plan at <strong>${MTB.inr(price)} a month</strong> (or ${MTB.inr(price*10)} a year). This button only simulates a payment. Nothing is charged, and no card details are collected.</p>
+            <div class="escrow-callout">
+              <h3>Demo only</h3>
+              <p>A live build would open Razorpay here. Your plan is saved only on this device, so the demo dashboards work.</p>
+            </div>
+            <button class="btn btn-gold btn-block" type="button" id="pay">Demo payment · ${MTB.inr(price)} / month</button>
+            <button class="btn btn-ghost btn-block" type="button" id="cancel" style="margin-top:8px">Cancel</button>
+          </div>`;
+          document.body.appendChild(overlay);
+          overlay.querySelector("#cancel").addEventListener("click", () => overlay.remove());
+          overlay.querySelector("#pay").addEventListener("click", () => {
+            MTB.setSession({
+              role,
+              name: fd.get("name"),
+              city: fd.get("city"),
+              plan,
+              email: fd.get("email")
+            });
+            MTB.toast("Welcome, " + fd.get("name") + " · " + plan + " plan");
+            location.href = role === "manufacturer" ? "dashboard-maker.html" : "dashboard-brand.html";
           });
-          MTB.toast("Welcome, " + fd.get("name"));
-          location.href = role === "manufacturer" ? "dashboard-maker.html" : "dashboard-brand.html";
         });
+        drawPlans();
       }
     });
 

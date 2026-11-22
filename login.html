@@ -67,7 +67,7 @@
           e.preventDefault();
           const fd = new FormData(e.target);
           const role = fd.get("role");
-          MTB.setSession({ role, name: fd.get("name"), city: "Mumbai", plan: "Free" });
+          MTB.setSession({ role, name: fd.get("name"), city: "Mumbai", plan: role === "manufacturer" ? "Pro" : role === "admin" ? "—" : "Brand" });
           location.href = role === "admin" ? "admin.html" : role === "manufacturer" ? "dashboard-maker.html" : "dashboard-brand.html";
         });
       }

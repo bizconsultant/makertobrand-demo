@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Memberships · MakerToBrand</title>
-  <meta name="description" content="Free, Pro and Premium memberships in INR, plus a commission on every order.">
+  <meta name="description" content="A ₹2,500 monthly plan for brands with no commission, and Pro, Business and Premium plans for manufacturers and wholesalers.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -17,26 +17,27 @@
   <main class="page-pad">
     <div class="wrap page-intro" style="text-align:center">
       <span class="eyebrow ink">How the platform earns</span>
-      <h1>A small cut of every order, and plans for those who want more.</h1>
-      <p class="lead" style="margin:12px auto 0">Memberships unlock a verified badge, a higher place in search, and more listings. On top of that, commission falls as the same brand and factory keep trading on the site. Prices in Indian rupees.</p>
+      <h1>Whoever earns from the marketplace, pays a little to be here.</h1>
+      <p class="lead" style="margin:12px auto 0">Brands pay a single subscription and never a fee at checkout. Manufacturers and wholesalers pay a membership, plus a 3% commission on each sale — or none, on Premium. Prices in Indian rupees.</p>
       <div class="billing-toggle" style="margin-top:28px" id="billing">
         <button type="button" data-bill="month" class="is-on">Monthly</button>
         <button type="button" data-bill="year">Yearly · two months free</button>
       </div>
     </div>
     <div class="wrap">
-      <div class="plan-grid" id="plans"></div>
-      <div class="loyalty-band">
-        <span class="eyebrow ink">Loyalty commission</span>
-        <h2 style="font-size:36px;margin:6px 0 8px">Stay, and the cut gets smaller.</h2>
-        <p class="muted" style="margin:0;max-width:40rem">Repeat orders between the same brand and manufacturer cost less in commission. That is a reason to keep the next order on MakerToBrand, rather than taking it private.</p>
-        <div class="loyalty-steps">
-          <div><span class="muted">First order together</span><b>5%</b><span class="muted">Starting rate</span></div>
-          <div><span class="muted">2nd to 4th order</span><b>3%</b><span class="muted">Repeat partner rate</span></div>
-          <div><span class="muted">5th order onward</span><b>2%</b><span class="muted">Long-standing partners</span></div>
-        </div>
-      </div>
-      <p class="muted" style="text-align:center;margin-top:28px">Commission is taken when a payment is released. Memberships can be started from a dashboard in the live product — here, choosing a plan simply shows the confirmation.</p>
+      <section class="pricing-block" id="brands">
+        <span class="eyebrow ink">For brands</span>
+        <h2>One plan. No commission, ever.</h2>
+        <p class="muted" style="max-width:36rem">Full access to manufacturer search, production briefs, quotes and payments held until delivery. You pay only the product price at checkout.</p>
+        <div class="plan-grid brand-plans" id="brand-plan"></div>
+      </section>
+      <section class="pricing-block" id="sellers">
+        <span class="eyebrow ink">For manufacturers &amp; wholesalers</span>
+        <h2>Get found, and keep more of each sale as you grow.</h2>
+        <p class="muted" style="max-width:36rem">Memberships unlock a verified badge, a higher place in search, and more listings. Pro and Business pay a 3% commission on each sale, taken from the payout. Premium pays none.</p>
+        <div class="plan-grid" id="plans"></div>
+      </section>
+      <p class="muted" style="text-align:center;margin-top:28px">Commission is taken from the seller’s payout when a payment is released. Memberships can be started from sign-up — here, choosing a plan simply shows the confirmation. Nothing is charged in this demo.</p>
     </div>
   </main>
 
@@ -48,23 +49,27 @@
       page: "pricing",
       after() {
         let bill = "month";
+        function card(p, extraClass) {
+          const amt = bill === "year" ? p.priceYear : p.priceMonth;
+          const suffix = bill === "year" ? "<span> / year</span>" : "<span> / month</span>";
+          return `<article class="plan ${p.popular ? "is-popular" : ""} ${extraClass || ""}">
+            ${p.popular ? '<div class="popular-tag">Most chosen</div>' : ""}
+            <span class="eyebrow ${p.popular ? "" : "ink"}">${p.name}</span>
+            <div class="amount">${MTB.inr(amt)}${suffix}</div>
+            <p class="${p.popular ? "" : "muted"}">${p.blurb}</p>
+            <p class="plan-fee">${p.fee}</p>
+            <ul>${p.features.map((f) => "<li>" + f + "</li>").join("")}</ul>
+            <button class="btn ${p.popular || extraClass === "is-popular" ? "btn-gold" : "btn-dark"} btn-block" data-plan="${p.id}">Choose ${p.name}</button>
+          </article>`;
+        }
         function draw() {
-          document.getElementById("plans").innerHTML = MTB_DATA.plans.map((p) => {
-            const amt = bill === "year" ? p.priceYear : p.priceMonth;
-            const suffix = amt === 0 ? "" : (bill === "year" ? "<span> / year</span>" : "<span> / month</span>");
-            const price = amt === 0 ? "Free" : MTB.inr(amt);
-            return `<article class="plan ${p.popular ? "is-popular" : ""}">
-              ${p.popular ? '<div class="popular-tag">Most chosen</div>' : ""}
-              <span class="eyebrow ${p.popular ? "" : "ink"}">${p.name}</span>
-              <div class="amount">${price}${suffix}</div>
-              <p class="${p.popular ? "" : "muted"}">${p.blurb} Commission ${p.commission}.</p>
-              <ul>${p.features.map((f) => "<li>" + f + "</li>").join("")}</ul>
-              <button class="btn ${p.popular ? "btn-gold" : "btn-dark"} btn-block" data-plan="${p.id}">Choose ${p.name}</button>
-            </article>`;
-          }).join("");
+          const bp = MTB_DATA.brandPlan;
+          document.getElementById("brand-plan").innerHTML = card(Object.assign({ popular: true }, bp), "is-popular");
+          document.getElementById("plans").innerHTML = MTB_DATA.plans.map((p) => card(p)).join("");
           document.querySelectorAll("[data-plan]").forEach((b) => b.addEventListener("click", () => {
-            const plan = MTB_DATA.plans.find((x) => x.id === b.getAttribute("data-plan"));
-            MTB.toast("Demo only — " + plan.name + " would start at " + (plan.priceMonth ? MTB.inr(plan.priceMonth) + "/month" : "no charge") + ".");
+            const id = b.getAttribute("data-plan");
+            const plan = id === "brand" ? MTB_DATA.brandPlan : MTB_DATA.plans.find((x) => x.id === id);
+            MTB.toast("Demo only — " + plan.name + " would start at " + MTB.inr(plan.priceMonth) + "/month.");
           }));
         }
         document.querySelectorAll("#billing button").forEach((btn) => {

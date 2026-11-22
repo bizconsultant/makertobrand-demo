@@ -18,7 +18,7 @@
     <div class="wrap-wide page-intro">
       <span class="eyebrow ink">Brand dashboard</span>
       <h1 id="hello">Your orders, briefs and conversations.</h1>
-      <p class="lead">A quiet desk for a label that buys both stock and custom work. GST invoices, tracking and re-orders are included only for orders paid on the site.</p>
+      <p class="lead" id="brand-lead">A quiet desk for a label that buys both stock and custom work. You pay a ₹2,500 monthly plan, and only the product price at checkout — never a commission. GST invoices, tracking and re-orders are included only for orders paid on the site.</p>
     </div>
     <div class="wrap-wide">
       <div class="kpi-grid" id="kpis"></div>
@@ -40,6 +40,7 @@
       after() {
         const s = MTB.requireRole("brand");
         document.getElementById("hello").textContent = s.name + " · orders, briefs and conversations.";
+        if (s.plan) document.getElementById("brand-lead").textContent = s.name + " is on the Brand plan at ₹2,500 a month. You pay only the product price at checkout — never a commission. GST invoices, tracking and re-orders are included only for orders paid on the site.";
         const orders = MTB.allOrders();
         const rfqs = MTB.allRfqs();
         const openHold = orders.filter((o) => o.status === "held" || o.status === "deposit" || o.status === "inspection").reduce((a,o) => a + (o.deposit || o.total), 0);

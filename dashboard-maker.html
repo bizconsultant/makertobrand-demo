@@ -18,7 +18,7 @@
     <div class="wrap-wide page-intro">
       <span class="eyebrow ink">Manufacturer dashboard</span>
       <h1 id="hello">Enquiries, quotes, orders and earnings.</h1>
-      <p class="lead">The view a factory owner would open every morning — work coming in, money still held, money already released. Repeat partners pay a lower commission on the next on-site order.</p>
+      <p class="lead">The view a factory owner would open every morning — work coming in, money still held, money already released. Your payout is the order value minus a 3% platform fee, or the full amount if you are on Premium.</p>
     </div>
     <div class="wrap-wide">
       <div class="kpi-grid" id="kpis"></div>
@@ -44,15 +44,23 @@
         const me = MTB.maker(makerId);
         document.getElementById("hello").textContent = (me ? me.name : s.name) + " · enquiries, orders and earnings.";
         const myOrders = MTB.allOrders().filter((o) => !o.makerId || o.makerId === makerId);
-        const held = myOrders.filter((o) => o.status !== "released").reduce((a,o) => a + (o.deposit || o.total || 0), 0);
-        const released = myOrders.filter((o) => o.status === "released").reduce((a,o) => a + o.total, 0);
+        function payout(o) {
+          if (o.makerPayout != null) return o.makerPayout;
+          return MTB.feeFor(o.total, me).makerPayout;
+        }
+        function feeAmt(o) {
+          if (o.platformFee != null) return o.platformFee;
+          return MTB.feeFor(o.total, me).fee;
+        }
+        const held = myOrders.filter((o) => o.status !== "released").reduce((a,o) => a + (o.status === "deposit" && o.deposit ? Math.round(payout(o) * (o.deposit/o.total)) : payout(o)), 0);
+        const released = myOrders.filter((o) => o.status === "released").reduce((a,o) => a + payout(o), 0);
         const myQuotes = MTB.allRfqs().flatMap((r) => (r.quotes||[]).filter((q) => q.makerId === makerId).map((q) => Object.assign({ rfq: r }, q)));
         const openBriefs = MTB.allRfqs().filter((r) => r.status !== "accepted");
         document.getElementById("kpis").innerHTML = `
           <div class="kpi"><span>Open briefs to consider</span><b>${openBriefs.length}</b></div>
           <div class="kpi"><span>Quotes sent</span><b>${myQuotes.length}</b></div>
           <div class="kpi"><span>Held for you</span><b>${MTB.inr(held)}</b></div>
-          <div class="kpi"><span>Released (after commission)</span><b>${MTB.inr(Math.round(released * 0.96))}</b></div>`;
+          <div class="kpi"><span>Released to you</span><b>${MTB.inr(released)}</b></div>`;
         const views = {
           enquiries() {
             return `<p class="muted">New production briefs across the marketplace. Send a quote from the brief itself.</p>
@@ -87,42 +95,29 @@
             </tbody></table></div>`;
           },
           earnings() {
+            const waived = MTB.sellerFeeRate(me) === 0;
             const rows = myOrders.map((o) => {
-              const comm = o.commission || Math.round(o.total * 0.04);
-              const net = (o.deposit && o.status === "deposit") ? Math.round(o.deposit - comm * (o.deposit/o.total)) : (o.status === "released" ? o.total - comm : 0);
+              const comm = feeAmt(o);
+              const net = payout(o);
+              const feeLabel = (o.feeWaived || (comm === 0 && waived)) ? "waived, Premium" : MTB.inr(comm);
+              const releasedAmt = o.status === "released" ? net : "—";
+              const heldAmt = o.status !== "released" ? (o.status === "deposit" && o.deposit ? Math.round(net * (o.deposit/o.total)) : net) : "—";
               return `<tr>
                 <td>${o.id}</td>
                 <td>${MTB.inr(o.total)}</td>
-                <td>${MTB.inr(comm)}</td>
-                <td>${o.status === "released" ? MTB.inr(o.total - comm) : "—"}</td>
-                <td>${o.status !== "released" ? MTB.inr(o.deposit || o.total) : "—"}</td>
+                <td>${feeLabel}</td>
+                <td>${releasedAmt === "—" ? "—" : MTB.inr(releasedAmt)}</td>
+                <td>${heldAmt === "—" ? "—" : MTB.inr(heldAmt)}</td>
               </tr>`;
             }).join("");
-            const byBrand = {};
-            myOrders.forEach((o) => {
-              const name = o.brand || "Brand";
-              byBrand[name] = byBrand[name] || [];
-              byBrand[name].push(o);
-            });
-            const partnerRows = Object.keys(byBrand).map((name) => {
-              const n = byBrand[name].length;
-              const next = MTB.loyaltyRate(n);
-              const current = MTB.loyaltyRate(Math.max(0, n - 1));
-              return `<tr>
-                <td>${MTB.escapeHtml(name)}</td>
-                <td>${n}</td>
-                <td>${MTB.pct(current)} on the latest order</td>
-                <td><span class="badge badge-ok">Repeat partner ${MTB.pct(next)}</span> on the next on-site order</td>
-              </tr>`;
-            }).join("");
-            return `<p class="muted">Commission between a brand and your factory starts at 5% on the first on-site order, falls to 3% from the second, and to 2% from the fifth. That repeat-partner rate only applies to orders paid on MakerToBrand.</p>
-              <h3 style="font-size:24px;margin:18px 0 10px">Repeat partners</h3>
-              <div class="table-wrap"><table class="data"><thead><tr><th>Brand</th><th>Orders together</th><th>Latest rate</th><th>Next order</th></tr></thead><tbody>${partnerRows || "<tr><td colspan=4>No on-site orders yet.</td></tr>"}</tbody></table></div>
+            return `<p class="muted">${waived
+              ? "You are on the Premium plan, so the 3% platform fee is waived. You receive the full order value when payment is released."
+              : "A 3% platform fee is taken from your payout when payment is released. Brands never see this fee — they pay only the product price. Upgrade to Premium to have the fee waived."}</p>
               <p style="margin:16px 0"><a class="btn btn-ghost btn-sm" href="pricing.html">Review memberships</a>
               <a class="btn btn-ghost btn-sm" href="manufacturer.html?id=${makerId}">View your public profile</a></p>
-              <div class="table-wrap"><table class="data"><thead><tr><th>Order</th><th>Gross</th><th>Commission</th><th>Released to you</th><th>Still held</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+              <div class="table-wrap"><table class="data"><thead><tr><th>Order</th><th>Gross</th><th>Platform fee</th><th>Released to you</th><th>Still held</th></tr></thead><tbody>${rows}</tbody></table></div>`;
           }
-        };
+                };
         let tab = "enquiries";
         function draw() { document.getElementById("panel").innerHTML = views[tab](); }
         document.getElementById("tabs").addEventListener("click", (e) => {

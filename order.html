@@ -28,10 +28,13 @@
         const product = order.productId ? MTB.product(order.productId) : null;
         const maker = order.makerId ? MTB.maker(order.makerId) : (order.items && order.items[0] ? MTB.maker(MTB.product(order.items[0].id).makerId) : null);
         document.title = order.id + " · MakerToBrand";
-        const partners = (order.brand && order.makerId) ? MTB.partnerOrders(order.brand, order.makerId).length : 1;
-        const rate = MTB.loyaltyRate(Math.max(0, partners - 1));
-        const next = MTB.loyaltyRate(partners);
         const status = order.status;
+        const session = MTB.getSession();
+        const isSellerView = session && session.role === "manufacturer";
+        const fee = MTB.feeFor(order.total, order.makerId ? MTB.maker(order.makerId) : "Pro");
+        const feeAmt = order.platformFee != null ? order.platformFee : fee.fee;
+        const waived = order.feeWaived || fee.feeWaived;
+        const payout = order.makerPayout != null ? order.makerPayout : fee.makerPayout;
         function step(key, label, detail) {
           const orderSteps = ["placed", "held", "production", "inspection", "delivered", "released"];
           const current = { held: "production", deposit: "production", inspection: "inspection", released: "released" }[status] || "held";
@@ -49,7 +52,7 @@
           </div>
           <div class="escrow-callout" style="text-align:left;margin:0 0 28px">
             <h3>${order.statusLabel || "Payment held"}</h3>
-            <p>Placed ${order.placed || "today"}. Expected ${order.eta || "in the coming weeks"}. ${order.deposit ? "Deposit " + MTB.inr(order.deposit) + " held; balance " + MTB.inr(order.balance) + " is due on delivery." : "The manufacturer can see that funds are secured, and will be paid when you confirm receipt — a guarantee that exists only for on-site orders."} Commission on this order is ${MTB.pct(rate)}${partners > 1 ? " as a repeat partner" : " for a first order together"}. The next order between these two would be ${MTB.pct(next)}.</p>
+            <p>Placed ${order.placed || "today"}. Expected ${order.eta || "in the coming weeks"}. ${order.deposit ? "Deposit " + MTB.inr(order.deposit) + " held; balance " + MTB.inr(order.balance) + " is due on delivery." : "The manufacturer can see that funds are secured, and will be paid when you confirm receipt — a guarantee that exists only for on-site orders."}${isSellerView ? (waived ? " Platform fee: waived, Premium. You receive the full " + MTB.inr(order.total) + "." : " A 3% platform fee of " + MTB.inr(feeAmt) + " will be taken from your payout, leaving " + MTB.inr(payout) + ".") : ""}</p>
           </div>
           <div class="profile-grid">
             <div>

@@ -17,16 +17,43 @@
   <main>
     <section class="hero" style="padding:0">
       <div class="hero-copy">
-        <span class="eyebrow">India · Ready-made &amp; custom production</span>
-        <h1>Where India’s makers meet the brands that need them.</h1>
-        <p class="lead">Source wholesale stock, or brief a factory with your design, quantity and date. Every payment is held securely until the goods are delivered.</p>
+        <span class="eyebrow">India · Find manufacturers</span>
+        <h1>Find the manufacturer for your next line.</h1>
+        <p class="lead">Search factories by product, city and minimum order size. Buy ready-made stock, or brief a unit with your design. Every payment is held until the goods are delivered.</p>
+        <form class="hero-search" action="manufacturers.html" method="get">
+          <label class="hs-field hs-q"><span>Product or craft</span><input type="search" name="q" placeholder="e.g. knitwear, denim, kurtas"></label>
+          <label class="hs-field"><span>City or hub</span>
+            <select name="city">
+              <option value="">All of India</option>
+              <option>Tiruppur</option>
+              <option>Ludhiana</option>
+              <option>Surat</option>
+              <option>Jaipur</option>
+              <option>Mumbai</option>
+              <option value="Delhi NCR">Delhi NCR</option>
+              <option>Bengaluru</option>
+              <option>Kolkata</option>
+            </select>
+          </label>
+          <label class="hs-field"><span>Max. minimum order</span>
+            <select name="moq">
+              <option value="">Any MOQ</option>
+              <option value="150">Up to 150</option>
+              <option value="250">Up to 250</option>
+              <option value="400">Up to 400</option>
+              <option value="800">Up to 800</option>
+            </select>
+          </label>
+          <button class="btn btn-gold" type="submit">Search</button>
+        </form>
         <div class="hero-actions">
-          <a class="btn btn-gold" href="stock.html">Browse ready-made</a>
-          <a class="btn btn-light" href="custom.html">Post a production brief</a>
+          <a class="btn btn-light" href="manufacturers.html">Browse all manufacturers</a>
+          <a class="btn btn-ghost hero-ghost" href="stock.html">Ready-made stock</a>
+          <a class="btn btn-ghost hero-ghost" href="custom.html">Post a production brief</a>
         </div>
         <div class="hero-stats">
-          <div><b>180+</b><span>manufacturers, in this demo’s story</span></div>
-          <div><b>7</b><span>production hubs across India</span></div>
+          <div><b>18</b><span>sample manufacturers in this demo</span></div>
+          <div><b>8</b><span>production hubs across India</span></div>
           <div><b>Held</b><span>until delivery, via Razorpay</span></div>
         </div>
       </div>
@@ -35,14 +62,41 @@
       </div>
     </section>
 
-    <section>
+    <section class="cat-section">
+      <div class="wrap-wide">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow ink">Shop by craft</span>
+            <h2>Start with what you need made.</h2>
+          </div>
+          <a class="btn btn-ghost" href="manufacturers.html">See every factory</a>
+        </div>
+        <div class="cat-grid" id="cat-grid"></div>
+      </div>
+    </section>
+
+    <section style="padding-top:0">
+      <div class="wrap-wide">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow ink">The mill as a website</span>
+            <h2>Every manufacturer gets a shop window.</h2>
+          </div>
+          <a class="btn btn-ghost" href="manufacturers.html">See all manufacturers</a>
+        </div>
+        <p class="muted" style="max-width:40rem;margin:-16px 0 28px">Most factories on this platform will not have a website of their own. Their MakerToBrand profile is the page they send to buyers — photographs, capacity, minimums, certifications and a way to start talking.</p>
+        <div class="maker-grid" id="featured-makers"></div>
+      </div>
+    </section>
+
+    <section style="padding-top:0">
       <div class="wrap-wide">
         <div class="section-head">
           <div>
             <span class="eyebrow ink">Two ways to buy</span>
             <h2>Stock on the shelf, or a line made for you.</h2>
           </div>
-          <p>Brands come for both. Manufacturers list what they can ship now, and quote on the work they would rather develop with you.</p>
+          <p>Once you have found a factory, you can buy what they already make, or brief them on a design of your own.</p>
         </div>
         <div class="split-paths">
           <a class="path-card" href="stock.html">
@@ -61,25 +115,11 @@
       </div>
     </section>
 
-    <section style="padding-top:0">
-      <div class="wrap-wide">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow ink">The mill as a website</span>
-            <h2>Every manufacturer gets a shop window.</h2>
-          </div>
-          <a class="btn btn-ghost" href="manufacturers.html">See all manufacturers</a>
-        </div>
-        <p class="muted" style="max-width:40rem;margin:-16px 0 28px">Most factories on this platform will not have a website of their own. Their MakerToBrand profile is the page they send to buyers — photographs, capacity, minimums, certifications and a way to start talking.</p>
-        <div class="maker-grid" id="featured-makers"></div>
-      </div>
-    </section>
-
     <section class="hubs">
       <div class="wrap-wide">
         <span class="eyebrow">Production map</span>
-        <h2>Seven hubs, one marketplace.</h2>
-        <p class="lead" style="color:rgba(247,242,235,.7)">From Tiruppur knits to Jaipur print, the work already lives in these cities. MakerToBrand simply puts them in front of the brands that are looking.</p>
+        <h2>Eight hubs, one marketplace.</h2>
+        <p class="lead" style="color:rgba(247,242,235,.7)">From Tiruppur knits to Kolkata ethnic wear, the work already lives in these cities. MakerToBrand simply puts them in front of the brands that are looking.</p>
         <div class="hub-list" id="hub-list"></div>
       </div>
     </section>
@@ -102,17 +142,16 @@
         <div>
           <span class="eyebrow ink">Payments</span>
           <h2>The money stays safe until the goods arrive.</h2>
-          <p class="lead">Brands pay through the site. MakerToBrand holds the amount — with Razorpay as the intended payments partner — and releases it when the order is delivered. This protection, and the factory’s guaranteed payout, apply only to orders paid on MakerToBrand. On custom work, a deposit starts production; the balance is paid on delivery.</p>
+          <p class="lead">Brands pay the product price through the site. MakerToBrand holds the amount — with Razorpay as the intended payments partner — and releases it when the order is delivered. This protection, and the factory’s guaranteed payout, apply only to orders paid on MakerToBrand. On custom work, a deposit starts production; the balance is paid on delivery.</p>
           <a class="btn btn-dark" href="how-it-works.html#payments">How payments work</a>
         </div>
         <div class="steps">
           <div class="step"><div class="step-num">01</div><div><h3>Place the order</h3><p class="muted">Pay the deposit, or the full wholesale amount, at checkout.</p></div></div>
           <div class="step"><div class="step-num">02</div><div><h3>We hold the payment</h3><p class="muted">The manufacturer can see that funds are secured, but cannot withdraw them yet.</p></div></div>
-          <div class="step"><div class="step-num">03</div><div><h3>Released on delivery</h3><p class="muted">Once the brand confirms receipt, the payment is released. The platform keeps a small commission.</p></div></div>
+          <div class="step"><div class="step-num">03</div><div><h3>Released on delivery</h3><p class="muted">Once the brand confirms receipt, the payment is released to the factory, minus any seller commission.</p></div></div>
         </div>
       </div>
     </div>
-
 
     <section id="why-stay">
       <div class="wrap-wide">
@@ -121,7 +160,7 @@
             <span class="eyebrow ink">Why stay on MakerToBrand</span>
             <h2>The safest deal is the one that stays on the site.</h2>
           </div>
-          <p>Your client earns a commission on every on-site order, and membership fees even when no order goes through. These protections make staying the better choice for both sides.</p>
+          <p>Your client earns a membership fee from both sides, and a 3% commission from sellers on every on-site order — even when a deal could have gone private. These protections make staying the better choice.</p>
         </div>
         <div class="stay-grid">
           <article class="stay-card">
@@ -141,8 +180,8 @@
           </article>
           <article class="stay-card">
             <div class="stay-num">04</div>
-            <h3>Commission falls as they repeat.</h3>
-            <p>5% on the first order between a brand and a factory, 3% from the second, 2% from the fifth. Loyalty makes staying cheaper than leaving.</p>
+            <h3>Whoever earns, pays a little.</h3>
+            <p>Brands pay a ₹2,500 monthly subscription and never a fee at checkout. Manufacturers and wholesalers pay a membership, plus 3% of each sale — or 0% on Premium.</p>
           </article>
           <article class="stay-card">
             <div class="stay-num">05</div>
@@ -164,7 +203,7 @@
         <div class="section-head">
           <div>
             <span class="eyebrow ink">Memberships</span>
-            <h2>A small commission, and plans for those who want to be seen first.</h2>
+            <h2>A subscription for brands, and plans for the factories that want to be seen first.</h2>
           </div>
           <a class="btn btn-ghost" href="pricing.html">View plans</a>
         </div>
@@ -189,7 +228,7 @@
       <div class="wrap" style="text-align:center">
         <span class="eyebrow ink">Open sign-up</span>
         <h2 style="font-size:clamp(36px,5vw,64px);max-width:16ch;margin:0 auto 16px">Join as a brand, or as a manufacturer.</h2>
-        <p class="muted" style="margin:0 auto 24px;max-width:36rem">Anyone can create an account and start. Verified badges and top search placement come with a paid membership — they are earned in public, not granted at the door.</p>
+        <p class="muted" style="margin:0 auto 24px;max-width:36rem">Anyone can create an account and start. Brands take a ₹2,500 monthly plan. Manufacturers choose Pro, Business or Premium — verified badges and top search placement come with those memberships.</p>
         <div class="hero-actions" style="justify-content:center">
           <a class="btn btn-primary" href="signup.html">Create a demo account</a>
           <a class="btn btn-ghost" href="pricing.html">See memberships</a>
@@ -205,12 +244,26 @@
     MTB.init({
       page: "home",
       after() {
-        const featured = ["desert-weave", "loom-lattice", "northline", "canopy-mills", "sutra-knitworks", "khadi-atelier"]
+        const cats = [
+          { name: "Knitwear", img: "images/hanging-tees.jpg", q: "Knitwear" },
+          { name: "Denim", img: "images/casual-stack.jpg", q: "Denim" },
+          { name: "Ethnic wear", img: "images/indian-textile.jpg", q: "Ethnic wear" },
+          { name: "Shirts", img: "images/shirts-hanging.jpg", q: "Shirts" },
+          { name: "Kidswear", img: "images/kids-clothes.jpg", q: "Kidswear" },
+          { name: "Festive", img: "images/festive.jpg", q: "Festive" }
+        ];
+        document.getElementById("cat-grid").innerHTML = cats.map((c) =>
+          `<a class="cat-tile" href="manufacturers.html?q=${encodeURIComponent(c.q)}">
+            <img src="${c.img}" alt="${c.name}">
+            <span>${c.name}</span>
+          </a>`
+        ).join("");
+        const featured = ["desert-weave", "loom-lattice", "hooghly-weave", "blue-selvedge", "northline", "whitefield-wovens"]
           .map((id) => MTB.maker(id));
         document.getElementById("featured-makers").innerHTML = featured.map(MTB.makerCard).join("");
         document.getElementById("home-products").innerHTML = MTB_DATA.products.slice(0, 4).map(MTB.productCard).join("");
         document.getElementById("hub-list").innerHTML = MTB_DATA.hubs.map((h) =>
-          `<div class="hub-item"><b>${h.city}</b><span>${h.state} · ${h.focus}</span></div>`
+          `<a class="hub-item" href="manufacturers.html?city=${encodeURIComponent(h.city)}"><b>${h.city}</b><span>${h.state} · ${h.focus}</span></a>`
         ).join("");
       }
     });
