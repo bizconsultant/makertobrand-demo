@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product · MakerToBrand</title>
+  <meta name="description" content="Wholesale product with bulk price tiers, minimum order quantity, and a path to checkout.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main class="page-pad"><div class="wrap-wide" id="root"></div></main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "stock",
+      after() {
+        const p = MTB.product(MTB.param("id")) || MTB_DATA.products[0];
+        const m = MTB.maker(p.makerId);
+        document.title = p.name + " · MakerToBrand";
+        let color = p.colors[0], size = p.sizes[Math.min(1, p.sizes.length-1)], qty = p.moq, img = 0;
+        const root = document.getElementById("root");
+        function draw() {
+          const unit = MTB.tierPrice(p, qty);
+          const ok = qty >= p.moq;
+          root.innerHTML = `
+            <div class="product-layout">
+              <div class="product-gallery">
+                <div class="main"><img src="${p.images[img]}" alt="${MTB.escapeHtml(p.name)}"></div>
+                <div class="thumbs">
+                  ${p.images.map((src,i) => `<button type="button" class="${i===img?"is-on":""}" data-img="${i}"><img src="${src}" alt=""></button>`).join("")}
+                </div>
+              </div>
+              <div>
+                <div class="card-meta"><a href="manufacturer.html?id=${m.id}" style="text-decoration:underline">${MTB.escapeHtml(m.name)}</a> · ${m.city}</div>
+                <h1 style="font-size:clamp(32px,4vw,52px);margin:8px 0 10px">${MTB.escapeHtml(p.name)}</h1>
+                <p class="muted">${p.fabric} · Lead time ${p.leadTime}</p>
+                <div class="price" style="font-size:36px;margin:8px 0">${MTB.inr(unit)} <small>per piece at this quantity</small></div>
+                <p>${MTB.escapeHtml(p.description)}</p>
+                <h3 style="font-family:var(--font-sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:8px">Price breaks</h3>
+                <table class="tiers">
+                  <thead><tr><th>Quantity</th><th>Unit price</th></tr></thead>
+                  <tbody>
+                    ${p.tiers.map((t) => {
+                      const on = qty >= t.min && (t.max == null || qty <= t.max);
+                      const range = t.max == null ? t.min.toLocaleString("en-IN") + "+" : t.min.toLocaleString("en-IN") + "–" + t.max.toLocaleString("en-IN");
+                      return `<tr class="${on?"is-on":""}"><td>${range} pcs</td><td>${MTB.inr(t.price)}</td></tr>`;
+                    }).join("")}
+                  </tbody>
+                </table>
+                <div class="form-grid">
+                  <label class="field"><span>Colour</span>
+                    <div class="swatches" id="colors">
+                      ${p.colors.map((c) => `<button type="button" class="${c===color?"is-on":""}" data-color="${c}">${c}</button>`).join("")}
+                    </div>
+                  </label>
+                  <label class="field"><span>Size (size curve can be refined at checkout)</span>
+                    <div class="sizes swatches" id="sizes">
+                      ${p.sizes.map((s) => `<button type="button" class="${s===size?"is-on":""}" data-size="${s}">${s}</button>`).join("")}
+                    </div>
+                  </label>
+                  <label class="field"><span>Quantity · minimum ${p.moq}</span>
+                    <div class="qty-row">
+                      <input id="qty" type="number" min="${p.moq}" step="10" value="${qty}">
+                      <span class="muted">${ok ? "Line total " + MTB.inr(unit * qty) : "Below the minimum order"}</span>
+                    </div>
+                  </label>
+                  <button class="btn btn-primary" type="button" id="add" ${ok?"":"disabled"}>Add to cart</button>
+                  <div class="note-box">Payment will be held securely until delivery. Intended partner: Razorpay. This is a demo — nothing will be charged.</div>
+                </div>
+              </div>
+            </div>`;
+          root.querySelectorAll("[data-img]").forEach((b) => b.addEventListener("click", () => { img = +b.dataset.img; draw(); }));
+          root.querySelectorAll("[data-color]").forEach((b) => b.addEventListener("click", () => { color = b.dataset.color; draw(); }));
+          root.querySelectorAll("[data-size]").forEach((b) => b.addEventListener("click", () => { size = b.dataset.size; draw(); }));
+          const qtyInput = document.getElementById("qty");
+          qtyInput.addEventListener("change", () => { qty = Number(qtyInput.value) || p.moq; draw(); });
+          document.getElementById("add").addEventListener("click", () => {
+            MTB.addToCart({ id: p.id, qty, color, size, name: p.name, image: p.images[0], makerId: p.makerId, moq: p.moq });
+          });
+        }
+        draw();
+      }
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manufacturer · MakerToBrand</title>
+  <meta name="description" content="A manufacturer profile — the mill's mini website on MakerToBrand.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main id="profile-root" class="page-pad"></main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "makers",
+      after() {
+        const m = MTB.maker(MTB.param("id")) || MTB_DATA.manufacturers[0];
+        document.title = m.name + " · MakerToBrand";
+        const products = MTB_DATA.products.filter((p) => p.makerId === m.id);
+        const root = document.getElementById("profile-root");
+        root.innerHTML = `
+          <div class="profile-hero">
+            <img src="${m.cover}" alt="${MTB.escapeHtml(m.name)}">
+            <div class="veil"></div>
+            <div class="intro">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+                ${m.verified ? '<span class="badge badge-verified">Verified</span>' : ""}
+                ${m.plan === "Premium" ? '<span class="badge badge-featured">Featured</span>' : m.plan === "Pro" ? '<span class="badge badge-featured">Pro</span>' : ""}
+              </div>
+              <h1>${MTB.escapeHtml(m.name)}</h1>
+              <p style="margin:8px 0 0;max-width:36rem">${MTB.escapeHtml(m.tagline)} · ${m.city}, ${m.state}</p>
+              <div class="card-meta" style="margin-top:10px;color:rgba(255,255,255,.8)">
+                <span class="stars">${MTB.stars(m.rating)} ${m.rating} · ${m.reviewCount} reviews</span>
+              </div>
+            </div>
+          </div>
+          <div class="wrap-wide">
+            <div class="facts">
+              <div><span>Minimum order</span><b>${m.moq} pcs</b></div>
+              <div><span>Capacity</span><b>${m.capacity}</b></div>
+              <div><span>Lead time</span><b>${m.leadTime}</b></div>
+              <div><span>Since</span><b>${m.established}</b></div>
+              <div><span>Team</span><b>${m.team}</b></div>
+            </div>
+            <div class="profile-grid" style="margin-top:48px">
+              <div>
+                <span class="eyebrow ink">About the unit</span>
+                <h2 style="font-size:40px;margin:8px 0 16px">A page they can send to any buyer.</h2>
+                <p>${MTB.escapeHtml(m.about)}</p>
+                <p><strong>Materials.</strong> ${m.materials.join(", ")}.</p>
+                <p><strong>Sizing.</strong> ${MTB.escapeHtml(m.sizes)}.</p>
+                <p><strong>Certifications.</strong> ${m.certifications.join(" · ")}${m.export ? " · Export ready" : ""}.</p>
+                <div class="gallery" style="margin:28px 0">
+                  ${m.gallery.map((src,i) => `<img src="${src}" alt="Gallery photograph ${i+1} from ${MTB.escapeHtml(m.name)}">`).join("")}
+                </div>
+                ${products.length ? `<h2 style="font-size:36px;margin:12px 0 18px">Ready-made from this floor</h2>
+                <div class="product-grid">${products.map(MTB.productCard).join("")}</div>` : ""}
+                <h2 style="font-size:36px;margin:36px 0 8px">What buyers say</h2>
+                ${m.reviews.map((r) => `<div class="review"><div class="card-meta"><strong>${MTB.escapeHtml(r.by)}</strong> <span class="stars">${MTB.stars(r.rating)}</span></div><p>“${MTB.escapeHtml(r.text)}”</p></div>`).join("")}
+              </div>
+              <aside>
+                <div class="sticky-card">
+                  <h3 style="font-size:28px;margin-bottom:8px">Start a conversation</h3>
+                  <p class="muted">Message the factory, or invite a quote on a custom brief. In the live product this would land in both inboxes.</p>
+                  <a class="btn btn-primary btn-block" href="messages.html?with=${encodeURIComponent(m.id)}">Send a message</a>
+                  <a class="btn btn-ghost btn-block" href="custom.html?invite=${encodeURIComponent(m.id)}" style="margin-top:8px">Request a custom quote</a>
+                  <hr class="sep">
+                  <div class="card-meta">
+                    ${m.categories.map((c) => `<span class="chip">${c}</span>`).join("")}
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>`;
+      }
+    });
+
+  </script>
+</body>
+</html>

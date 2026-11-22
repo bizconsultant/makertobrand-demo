@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Order · MakerToBrand</title>
+  <meta name="description" content="Order confirmation. Payment is shown as held securely until delivery.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main class="page-pad"><div class="wrap" id="root"></div></main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "cart",
+      after() {
+        const id = MTB.param("id");
+        const order = MTB.allOrders().find((o) => o.id === id) || MTB.allOrders()[0];
+        const product = order.productId ? MTB.product(order.productId) : null;
+        const maker = order.makerId ? MTB.maker(order.makerId) : (order.items && order.items[0] ? MTB.maker(MTB.product(order.items[0].id).makerId) : null);
+        document.title = order.id + " · MakerToBrand";
+        document.getElementById("root").innerHTML = `
+          <div class="success-panel">
+            <span class="eyebrow ink">Payment held</span>
+            <h1>Thank you. The amount is safe.</h1>
+            <p class="lead" style="margin:0 auto 24px">Order <strong>${order.id}</strong> is confirmed. ${MTB.inr(order.total)} is held until delivery${maker ? " from " + MTB.escapeHtml(maker.name) : ""}. Nothing was actually charged — this is a demo.</p>
+            <div class="escrow-callout" style="text-align:left;max-width:36rem;margin:0 auto 28px">
+              <h3>${order.statusLabel || "Payment held"}</h3>
+              <p>Placed ${order.placed || "today"}. Expected ${order.eta || "in the coming weeks"}. ${order.deposit ? "Deposit " + MTB.inr(order.deposit) + " held; balance " + MTB.inr(order.balance) + " is due on delivery." : "The manufacturer can see that funds are secured, and will be paid when you confirm receipt."}</p>
+            </div>
+            <div class="hero-actions" style="justify-content:center">
+              <a class="btn btn-dark" href="dashboard-brand.html">View in your dashboard</a>
+              <a class="btn btn-ghost" href="messages.html">Message the manufacturer</a>
+            </div>
+          </div>`;
+      }
+    });
+
+  </script>
+</body>
+</html>

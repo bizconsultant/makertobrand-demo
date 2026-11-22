@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MakerToBrand — India's apparel marketplace</title>
+  <meta name="description" content="A marketplace where apparel brand owners and garment manufacturers in India connect, trade ready-made stock, and brief custom production. Payments held until delivery.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main>
+    <section class="hero" style="padding:0">
+      <div class="hero-copy">
+        <span class="eyebrow">India · Ready-made &amp; custom production</span>
+        <h1>Where India’s makers meet the brands that need them.</h1>
+        <p class="lead">Source wholesale stock, or brief a factory with your design, quantity and date. Every payment is held securely until the goods are delivered.</p>
+        <div class="hero-actions">
+          <a class="btn btn-gold" href="stock.html">Browse ready-made</a>
+          <a class="btn btn-light" href="custom.html">Post a production brief</a>
+        </div>
+        <div class="hero-stats">
+          <div><b>180+</b><span>manufacturers, in this demo’s story</span></div>
+          <div><b>7</b><span>production hubs across India</span></div>
+          <div><b>Held</b><span>until delivery, via Razorpay</span></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="images/color-fabric.jpg" alt="Printed garments on a rail in a studio">
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap-wide">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow ink">Two ways to buy</span>
+            <h2>Stock on the shelf, or a line made for you.</h2>
+          </div>
+          <p>Brands come for both. Manufacturers list what they can ship now, and quote on the work they would rather develop with you.</p>
+        </div>
+        <div class="split-paths">
+          <a class="path-card" href="stock.html">
+            <img src="images/folded-tees.jpg" alt="Folded cotton t-shirts">
+            <span class="eyebrow">Ready-made stock</span>
+            <h3>Browse, cart, pay.</h3>
+            <p>Wholesale listings with minimums and price breaks. Checkout holds the payment until delivery.</p>
+          </a>
+          <a class="path-card" href="custom.html">
+            <img src="images/workshop-wide.jpg" alt="Hands sewing a garment">
+            <span class="eyebrow">Custom production</span>
+            <h3>Brief, quote, make.</h3>
+            <p>Post a design, quantity and date. Compare quotes, accept one, and pay a deposit. The rest is due on delivery.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top:0">
+      <div class="wrap-wide">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow ink">The mill as a website</span>
+            <h2>Every manufacturer gets a shop window.</h2>
+          </div>
+          <a class="btn btn-ghost" href="manufacturers.html">See all manufacturers</a>
+        </div>
+        <p class="muted" style="max-width:40rem;margin:-16px 0 28px">Most factories on this platform will not have a website of their own. Their MakerToBrand profile is the page they send to buyers — photographs, capacity, minimums, certifications and a way to start talking.</p>
+        <div class="maker-grid" id="featured-makers"></div>
+      </div>
+    </section>
+
+    <section class="hubs">
+      <div class="wrap-wide">
+        <span class="eyebrow">Production map</span>
+        <h2>Seven hubs, one marketplace.</h2>
+        <p class="lead" style="color:rgba(247,242,235,.7)">From Tiruppur knits to Jaipur print, the work already lives in these cities. MakerToBrand simply puts them in front of the brands that are looking.</p>
+        <div class="hub-list" id="hub-list"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap-wide">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow ink">In stock now</span>
+            <h2>A few things ready to order.</h2>
+          </div>
+          <a class="btn btn-ghost" href="stock.html">Open the catalogue</a>
+        </div>
+        <div class="product-grid four" id="home-products"></div>
+      </div>
+    </section>
+
+    <div class="trust-band">
+      <div class="wrap trust-grid">
+        <div>
+          <span class="eyebrow ink">Payments</span>
+          <h2>The money stays safe until the goods arrive.</h2>
+          <p class="lead">Brands pay through the site. MakerToBrand holds the amount — with Razorpay as the intended payments partner — and releases it when the order is delivered. On custom work, a deposit starts production; the balance is paid on delivery.</p>
+          <a class="btn btn-dark" href="how-it-works.html#payments">How payments work</a>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="step-num">01</div><div><h3>Place the order</h3><p class="muted">Pay the deposit, or the full wholesale amount, at checkout.</p></div></div>
+          <div class="step"><div class="step-num">02</div><div><h3>We hold the payment</h3><p class="muted">The manufacturer can see that funds are secured, but cannot withdraw them yet.</p></div></div>
+          <div class="step"><div class="step-num">03</div><div><h3>Released on delivery</h3><p class="muted">Once the brand confirms receipt, the payment is released. The platform keeps a small commission.</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <div class="wrap-wide">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow ink">Memberships</span>
+            <h2>A small commission, and plans for those who want to be seen first.</h2>
+          </div>
+          <a class="btn btn-ghost" href="pricing.html">View plans</a>
+        </div>
+        <div class="quotes">
+          <div class="quote-card">
+            <p>“We finally have a page we can send to buyers. We never built a website of our own.”</p>
+            <cite>Loom &amp; Lattice, Tiruppur</cite>
+          </div>
+          <div class="quote-card">
+            <p>“The brief went out on a Monday. By Thursday we had three quotes we could actually compare.”</p>
+            <cite>Nila Atelier, Mumbai</cite>
+          </div>
+          <div class="quote-card">
+            <p>“Knowing the deposit was held made it easier to start a first order with a factory we had just met.”</p>
+            <cite>Coast &amp; Cotton, Bengaluru</cite>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top:0">
+      <div class="wrap" style="text-align:center">
+        <span class="eyebrow ink">Open sign-up</span>
+        <h2 style="font-size:clamp(36px,5vw,64px);max-width:16ch;margin:0 auto 16px">Join as a brand, or as a manufacturer.</h2>
+        <p class="muted" style="margin:0 auto 24px;max-width:36rem">Anyone can create an account and start. Verified badges and top search placement come with a paid membership — they are earned in public, not granted at the door.</p>
+        <div class="hero-actions" style="justify-content:center">
+          <a class="btn btn-primary" href="signup.html">Create a demo account</a>
+          <a class="btn btn-ghost" href="pricing.html">See memberships</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "home",
+      after() {
+        const featured = ["desert-weave", "loom-lattice", "northline", "canopy-mills", "sutra-knitworks", "khadi-atelier"]
+          .map((id) => MTB.maker(id));
+        document.getElementById("featured-makers").innerHTML = featured.map(MTB.makerCard).join("");
+        document.getElementById("home-products").innerHTML = MTB_DATA.products.slice(0, 4).map(MTB.productCard).join("");
+        document.getElementById("hub-list").innerHTML = MTB_DATA.hubs.map((h) =>
+          `<div class="hub-item"><b>${h.city}</b><span>${h.state} · ${h.focus}</span></div>`
+        ).join("");
+      }
+    });
+
+  </script>
+</body>
+</html>

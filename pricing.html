@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Memberships · MakerToBrand</title>
+  <meta name="description" content="Free, Pro and Premium memberships in INR, plus a commission on every order.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main class="page-pad">
+    <div class="wrap page-intro" style="text-align:center">
+      <span class="eyebrow ink">How the platform earns</span>
+      <h1>A small cut of every order, and plans for those who want more.</h1>
+      <p class="lead" style="margin:12px auto 0">Memberships unlock a verified badge, a higher place in search, and more listings. Commission falls as the plan rises. Prices in Indian rupees.</p>
+      <div class="billing-toggle" style="margin-top:28px" id="billing">
+        <button type="button" data-bill="month" class="is-on">Monthly</button>
+        <button type="button" data-bill="year">Yearly · two months free</button>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="plan-grid" id="plans"></div>
+      <p class="muted" style="text-align:center;margin-top:28px">Commission is taken when a payment is released. Memberships can be started from a dashboard in the live product — here, choosing a plan simply shows the confirmation.</p>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "pricing",
+      after() {
+        let bill = "month";
+        function draw() {
+          document.getElementById("plans").innerHTML = MTB_DATA.plans.map((p) => {
+            const amt = bill === "year" ? p.priceYear : p.priceMonth;
+            const suffix = amt === 0 ? "" : (bill === "year" ? "<span> / year</span>" : "<span> / month</span>");
+            const price = amt === 0 ? "Free" : MTB.inr(amt);
+            return `<article class="plan ${p.popular ? "is-popular" : ""}">
+              ${p.popular ? '<div class="popular-tag">Most chosen</div>' : ""}
+              <span class="eyebrow ${p.popular ? "" : "ink"}">${p.name}</span>
+              <div class="amount">${price}${suffix}</div>
+              <p class="${p.popular ? "" : "muted"}">${p.blurb} Commission ${p.commission}.</p>
+              <ul>${p.features.map((f) => "<li>" + f + "</li>").join("")}</ul>
+              <button class="btn ${p.popular ? "btn-gold" : "btn-dark"} btn-block" data-plan="${p.id}">Choose ${p.name}</button>
+            </article>`;
+          }).join("");
+          document.querySelectorAll("[data-plan]").forEach((b) => b.addEventListener("click", () => {
+            const plan = MTB_DATA.plans.find((x) => x.id === b.getAttribute("data-plan"));
+            MTB.toast("Demo only — " + plan.name + " would start at " + (plan.priceMonth ? MTB.inr(plan.priceMonth) + "/month" : "no charge") + ".");
+          }));
+        }
+        document.querySelectorAll("#billing button").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            bill = btn.getAttribute("data-bill");
+            document.querySelectorAll("#billing button").forEach((b) => b.classList.toggle("is-on", b === btn));
+            draw();
+          });
+        });
+        draw();
+      }
+    });
+
+  </script>
+</body>
+</html>

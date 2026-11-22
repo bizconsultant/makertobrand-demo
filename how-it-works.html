@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How it works · MakerToBrand</title>
+  <meta name="description" content="How brands and manufacturers trade ready-made stock and custom production, and how payments are held until delivery.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main class="page-pad">
+    <div class="wrap page-intro">
+      <span class="eyebrow ink">The idea, plainly</span>
+      <h1>A marketplace with two doors, and one safe till.</h1>
+      <p class="lead">Brand owners come to find factories and to place orders. Manufacturers come to be found, and to fill their lines. MakerToBrand holds the money in between.</p>
+    </div>
+    <section style="padding-top:32px">
+      <div class="wrap-wide split-paths">
+        <div class="path-card" style="min-height:320px">
+          <img src="images/fashion-browse.jpg" alt="Browsing a clothing rail">
+          <span class="eyebrow">For brand owners</span>
+          <h3>Find, brief, order.</h3>
+          <p>Search manufacturers by city and craft. Buy stock in a cart, or post a production brief and compare quotes.</p>
+        </div>
+        <div class="path-card" style="min-height:320px">
+          <img src="images/tailor-hands.jpg" alt="A tailored jacket on a form">
+          <span class="eyebrow">For manufacturers</span>
+          <h3>A page, a shop, a pipeline.</h3>
+          <p>Your profile is a mini website — photographs, capacity, minimums, certifications. Quote on briefs, take orders, watch earnings land when goods are delivered.</p>
+        </div>
+      </div>
+    </section>
+    <section id="payments" style="padding-top:0">
+      <div class="wrap trust-grid">
+        <div>
+          <span class="eyebrow ink">Payments</span>
+          <h2>Held securely until delivery.</h2>
+          <p>On ready-made orders, the brand pays the full wholesale amount at checkout. On custom work, a deposit (typically 30–50%) starts production, and the balance is collected on delivery.</p>
+          <p>The intended payments partner is <strong>Razorpay</strong>. In a live product, funds would sit in a controlled account and move only when the order status changes. This demo never takes a card number and never charges anyone.</p>
+          <p class="muted">The platform earns a commission when payment is released — 5% on the Free plan, 4% on Pro, 3% on Premium — plus optional paid memberships.</p>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="step-num">01</div><div><h3>Pay on the site</h3><p class="muted">Checkout uses a Demo payment button. A live build would open Razorpay.</p></div></div>
+          <div class="step"><div class="step-num">02</div><div><h3>Status is visible to both</h3><p class="muted">Held, in production, inspection pending, or released — both dashboards show the same story.</p></div></div>
+          <div class="step"><div class="step-num">03</div><div><h3>Released on delivery</h3><p class="muted">The manufacturer receives the order value minus commission. Memberships can lower that cut.</p></div></div>
+        </div>
+      </div>
+    </section>
+    <section style="padding-top:0">
+      <div class="wrap">
+        <span class="eyebrow ink">Trust, with open doors</span>
+        <h2 style="margin-bottom:16px">Anyone can join. Bad accounts can be blocked.</h2>
+        <p class="lead">Sign-up is open, because the first version should be easy to enter. Escrow protects the payment. An admin can block an account in one click if something is wrong — you can try that in the admin view.</p>
+        <div class="hero-actions" style="margin-top:24px">
+          <a class="btn btn-dark" href="signup.html">Create a demo account</a>
+          <a class="btn btn-ghost" href="admin.html">Open the admin view</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({ page: "how" });
+
+  </script>
+</body>
+</html>

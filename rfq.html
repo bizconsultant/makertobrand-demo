@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Production brief · MakerToBrand</title>
+  <meta name="description" content="Compare manufacturer quotes, accept one, and pay a deposit held until delivery.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main class="page-pad"><div class="wrap-wide" id="root"></div></main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "custom",
+      after() {
+        const r = MTB.rfq(MTB.param("id")) || MTB.allRfqs()[0];
+        document.title = r.title + " · MakerToBrand";
+        const accepted = r.acceptedQuoteId || localStorage.getItem("mtb_accepted_" + r.id);
+        const session = MTB.getSession();
+        const isMaker = session && session.role === "manufacturer";
+
+        function render() {
+          const acc = r.acceptedQuoteId || localStorage.getItem("mtb_accepted_" + r.id);
+          document.getElementById("root").innerHTML = `
+            <div class="page-intro" style="padding-top:24px">
+              <a href="custom.html" class="muted" style="font-size:13px">← All briefs</a>
+              <div class="card-meta" style="margin-top:16px">
+                <span class="badge ${r.status==="accepted"||acc?"badge-ok":r.status==="open"?"badge-wait":"badge-held"}">${acc || r.status==="accepted" ? "Quote accepted" : (r.status==="open"?"Open for quotes":"Quotes in")}</span>
+                <span>${r.brand} · ${r.brandCity || ""}</span>
+                <span>Posted ${r.posted}</span>
+              </div>
+              <h1>${MTB.escapeHtml(r.title)}</h1>
+              <p class="lead">${Number(r.qty).toLocaleString("en-IN")} pieces · ${MTB.escapeHtml(r.fabric)} · Needed by ${r.deadline}. Budget ${r.budget}.</p>
+            </div>
+            <div class="profile-grid">
+              <div>
+                <h2 style="font-size:28px;margin-bottom:8px">The brief</h2>
+                <p>${MTB.escapeHtml(r.notes || "No further notes.")}</p>
+                ${r.sizes ? `<p class="muted">Size curve: ${MTB.escapeHtml(r.sizes)}</p>` : ""}
+                <h2 style="font-size:28px;margin:28px 0 16px">Quotes</h2>
+                <div class="quote-cards" id="quotes"></div>
+                <div id="maker-quote" style="margin-top:28px"></div>
+              </div>
+              <aside>
+                <div class="sticky-card">
+                  <h3 style="font-size:24px;margin-bottom:8px">How acceptance works</h3>
+                  <p class="muted">Accept a quote, then pay a deposit through a demo payment. The remainder is due on delivery, and both amounts are held until then.</p>
+                  <a class="btn btn-ghost btn-block" href="messages.html">Open messages</a>
+                </div>
+              </aside>
+            </div>`;
+          const qEl = document.getElementById("quotes");
+          if (!(r.quotes && r.quotes.length)) {
+            qEl.innerHTML = `<div class="empty" style="grid-column:1/-1">No quotes yet. Manufacturers in a live product would see this brief in their dashboard.</div>`;
+          } else {
+            qEl.innerHTML = r.quotes.map((q) => {
+              const m = MTB.maker(q.makerId);
+              const isAcc = acc === q.id;
+              const line = q.price * r.qty;
+              const deposit = Math.round(line * (q.deposit / 100));
+              return `<article class="quote-card-cmp ${isAcc?"is-accepted":""}">
+                <div class="card-meta">
+                  <a href="manufacturer.html?id=${m.id}" style="text-decoration:underline">${MTB.escapeHtml(m.name)}</a>
+                  <span>${m.city}</span>
+                </div>
+                <div class="amount">${MTB.inr(q.price)} <span style="font-size:14px;font-family:var(--font-sans)">/ pc</span></div>
+                <p class="muted">Line ${MTB.inr(line)} · ${q.lead} · ${q.deposit}% deposit (${MTB.inr(deposit)})</p>
+                <p>${MTB.escapeHtml(q.note)}</p>
+                ${isAcc ? `<span class="badge badge-ok">Accepted</span> <a class="btn btn-gold btn-sm" href="order.html?id=MTB-1810" style="margin-top:10px">View the order</a>` :
+                  (acc ? "" : `<button class="btn btn-primary" data-accept="${q.id}" type="button">Accept &amp; pay deposit</button>`)}
+              </article>`;
+            }).join("");
+            qEl.querySelectorAll("[data-accept]").forEach((b) => b.addEventListener("click", () => accept(b.dataset.accept)));
+          }
+          if (isMaker && r.status !== "accepted" && !acc) {
+            document.getElementById("maker-quote").innerHTML = `
+              <div class="summary-card" style="position:relative;top:0">
+                <h3 style="font-size:24px">Send a quote</h3>
+                <p class="muted">Demo only — your quote appears on this brief.</p>
+                <form id="quote-form" class="form-grid" style="margin-top:12px">
+                  <div class="form-row">
+                    <label class="field"><span>Unit price (INR)</span><input name="price" type="number" required min="1"></label>
+                    <label class="field"><span>Lead time</span><input name="lead" required placeholder="e.g. 28 days"></label>
+                  </div>
+                  <label class="field"><span>Deposit %</span><input name="deposit" type="number" value="35" min="20" max="60"></label>
+                  <label class="field"><span>Note to the brand</span><textarea name="note" required></textarea></label>
+                  <button class="btn btn-dark" type="submit">Send quote</button>
+                </form>
+              </div>`;
+            document.getElementById("quote-form").addEventListener("submit", (e) => {
+              e.preventDefault();
+              const fd = new FormData(e.target);
+              const q = {
+                id: "q-new-" + Date.now().toString(36),
+                makerId: session.makerId || "loom-lattice",
+                price: Number(fd.get("price")),
+                lead: fd.get("lead"),
+                moqOk: true,
+                deposit: Number(fd.get("deposit")),
+                daysAgo: 0,
+                note: fd.get("note")
+              };
+              r.quotes = r.quotes || [];
+              r.quotes.push(q);
+              // If this is an extra RFQ, persist it
+              const extras = MTB.getExtraRfqs();
+              const i = extras.findIndex((x) => x.id === r.id);
+              if (i >= 0) { extras[i] = r; localStorage.setItem(MTB.KEY.rfqs, JSON.stringify(extras)); }
+              MTB.toast("Quote sent");
+              render();
+            });
+          }
+        }
+
+        function accept(qid) {
+          const q = r.quotes.find((x) => x.id === qid);
+          const m = MTB.maker(q.makerId);
+          const line = q.price * r.qty;
+          const deposit = Math.round(line * (q.deposit / 100));
+          const overlay = document.createElement("div");
+          overlay.style.cssText = "position:fixed;inset:0;background:rgba(20,25,36,.55);z-index:90;display:flex;align-items:center;justify-content:center;padding:20px";
+          overlay.innerHTML = `<div class="summary-card" style="position:relative;top:0;max-width:440px;width:100%">
+            <h3 style="font-size:28px;margin-bottom:8px">Demo deposit</h3>
+            <p>Accept ${MTB.escapeHtml(m.name)} at ${MTB.inr(q.price)} per piece. A deposit of <strong>${MTB.inr(deposit)}</strong> (${q.deposit}%) will be held. Balance ${MTB.inr(line - deposit)} is due on delivery.</p>
+            <div class="escrow-callout">
+              <h3>No card details</h3>
+              <p>Intended partner: Razorpay. This button only simulates a held deposit.</p>
+            </div>
+            <button class="btn btn-gold btn-block" type="button" id="pay">Demo payment · hold ${MTB.inr(deposit)}</button>
+            <button class="btn btn-ghost btn-block" type="button" id="cancel" style="margin-top:8px">Cancel</button>
+          </div>`;
+          document.body.appendChild(overlay);
+          overlay.querySelector("#cancel").addEventListener("click", () => overlay.remove());
+          overlay.querySelector("#pay").addEventListener("click", () => {
+            localStorage.setItem("mtb_accepted_" + r.id, qid);
+            r.acceptedQuoteId = qid;
+            r.status = "accepted";
+            const extras = MTB.getExtraRfqs();
+            const i = extras.findIndex((x) => x.id === r.id);
+            if (i >= 0) { extras[i] = r; localStorage.setItem(MTB.KEY.rfqs, JSON.stringify(extras)); }
+            const orderId = "MTB-" + (1900 + Math.floor(Math.random()*80));
+            const order = {
+              id: orderId, type: "custom", rfqId: r.id, makerId: q.makerId,
+              brand: r.brand, qty: r.qty, unit: q.price, total: line,
+              deposit, balance: line - deposit, commission: Math.round(line * 0.04),
+              status: "deposit", statusLabel: "Deposit held · balance on delivery",
+              placed: "22 Nov 2026", eta: r.deadline
+            };
+            const orders = JSON.parse(localStorage.getItem(MTB.KEY.orders) || "[]");
+            orders.unshift(order);
+            localStorage.setItem(MTB.KEY.orders, JSON.stringify(orders));
+            location.href = "order.html?id=" + encodeURIComponent(orderId);
+          });
+        }
+        render();
+      }
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Messages · MakerToBrand</title>
+  <meta name="description" content="In-app messaging between a brand and a manufacturer. Demo conversation with sample data.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main class="page-pad">
+    <div class="wrap-wide page-intro">
+      <span class="eyebrow ink">Messages</span>
+      <h1>A short line between brand and mill.</h1>
+      <p class="lead">Talk about a brief, a sample, or a delivery date — without leaving the marketplace.</p>
+    </div>
+    <div class="wrap-wide">
+      <div class="msg-layout" id="root"></div>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "messages",
+      after() {
+        const withId = MTB.param("with");
+        const threadParam = MTB.param("thread");
+        let threads = MTB_DATA.threads.map((t) => JSON.parse(JSON.stringify(t)));
+        // If arriving from a manufacturer profile, open or create a thread
+        if (withId && !threads.some((t) => t.withId === withId)) {
+          const m = MTB.maker(withId);
+          if (m) {
+            threads.unshift({
+              id: "t-new",
+              with: m.name,
+              withId: m.id,
+              role: "manufacturer",
+              preview: "Start a conversation.",
+              updated: "Now",
+              messages: [
+                { from: "system", name: "MakerToBrand", time: "Just now", text: "This is a new conversation with " + m.name + ". Write a message below — it stays on this device." }
+              ]
+            });
+          }
+        }
+        let current = threads.find((t) => t.id === threadParam) || threads.find((t) => t.withId === withId) || threads[0];
+        const session = MTB.getSession();
+        const meSide = (session && session.role === "manufacturer") ? "maker" : "brand";
+
+        function draw() {
+          document.getElementById("root").innerHTML = `
+            <div class="thread-list">
+              ${threads.map((t) => `<button type="button" class="thread-item ${t.id===current.id?"is-on":""}" data-id="${t.id}" style="width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--line-soft)">
+                <b>${MTB.escapeHtml(t.with)}</b>
+                <span>${MTB.escapeHtml(t.preview)}</span>
+                <span style="display:block;margin-top:4px">${t.updated}</span>
+              </button>`).join("")}
+            </div>
+            <div class="chat">
+              <div style="padding:16px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px">
+                <div>
+                  <strong>${MTB.escapeHtml(current.with)}</strong>
+                  <div class="muted" style="font-size:13px">${current.withId ? `<a href="manufacturer.html?id=${current.withId}" style="text-decoration:underline">View profile</a>` : ""}</div>
+                </div>
+              </div>
+              <div class="chat-log" id="log">
+                ${current.messages.map((m) => {
+                  const mine = m.from === meSide;
+                  return `<div class="bubble ${mine?"me":""}"><small>${MTB.escapeHtml(m.name)} · ${m.time}</small>${MTB.escapeHtml(m.text)}</div>`;
+                }).join("")}
+              </div>
+              <form class="chat-compose" id="compose">
+                <input name="text" required placeholder="Write a message…" autocomplete="off">
+                <button class="btn btn-primary" type="submit">Send</button>
+              </form>
+            </div>`;
+          const log = document.getElementById("log");
+          log.scrollTop = log.scrollHeight;
+          document.querySelectorAll("[data-id]").forEach((b) => b.addEventListener("click", () => {
+            current = threads.find((t) => t.id === b.dataset.id);
+            draw();
+          }));
+          document.getElementById("compose").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const text = new FormData(e.target).get("text").trim();
+            if (!text) return;
+            const name = (session && session.name) || (meSide === "maker" ? "Loom & Lattice" : "Nila Atelier");
+            current.messages.push({ from: meSide, name, time: "Just now", text });
+            current.preview = text;
+            current.updated = "Just now";
+            draw();
+          });
+        }
+        draw();
+      }
+    });
+
+  </script>
+</body>
+</html>

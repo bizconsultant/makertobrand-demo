@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cart · MakerToBrand</title>
+  <meta name="description" content="Review wholesale items before a demo checkout. Payments are simulated.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main class="page-pad">
+    <div class="wrap-wide page-intro">
+      <span class="eyebrow ink">Your cart</span>
+      <h1>Ready to hold, not to charge.</h1>
+    </div>
+    <div class="wrap-wide cart-layout" id="root"></div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "cart",
+      after() {
+        const root = document.getElementById("root");
+        function lineTotal(item) {
+          const p = MTB.product(item.id);
+          const unit = MTB.tierPrice(p, item.qty);
+          return { p, unit, total: unit * item.qty, ok: item.qty >= p.moq };
+        }
+        function draw() {
+          const cart = MTB.getCart();
+          if (!cart.length) {
+            root.innerHTML = `<div class="empty" style="grid-column:1/-1"><p>Your cart is empty.</p><a class="btn btn-dark" href="stock.html">Browse ready-made stock</a></div>`;
+            return;
+          }
+          let sub = 0;
+          const rows = cart.map((item, idx) => {
+            const { p, unit, total, ok } = lineTotal(item);
+            const m = MTB.maker(p.makerId);
+            sub += ok ? total : 0;
+            return `<div class="line-item">
+              <img src="${p.images[0]}" alt="">
+              <div>
+                <a href="product.html?id=${p.id}"><strong>${MTB.escapeHtml(p.name)}</strong></a>
+                <div class="card-meta">${MTB.escapeHtml(m.name)} · ${item.color} · ${item.size}</div>
+                <div class="qty-row" style="margin-top:8px">
+                  <input type="number" min="${p.moq}" step="10" value="${item.qty}" data-idx="${idx}">
+                  <button class="btn btn-ghost btn-sm" data-remove="${idx}" type="button">Remove</button>
+                </div>
+                ${ok ? "" : `<p class="muted">Minimum order is ${p.moq}.</p>`}
+              </div>
+              <div class="line-price"><div class="price">${MTB.inr(unit)}</div><div class="muted">${MTB.inr(total)}</div></div>
+            </div>`;
+          }).join("");
+          root.innerHTML = `
+            <div>${rows}</div>
+            <aside class="summary-card">
+              <h3 style="font-size:28px;margin-bottom:12px">Summary</h3>
+              <div class="summary-row"><span>Merchandise</span><span>${MTB.inr(sub)}</span></div>
+              <div class="summary-row"><span>Shipping (quoted after address)</span><span>Included in demo</span></div>
+              <div class="summary-row total"><span>To be held</span><span>${MTB.inr(sub)}</span></div>
+              <div class="escrow-callout">
+                <h3>Held until delivery</h3>
+                <p>The amount is secured at checkout and released when you confirm the goods. Intended partner: Razorpay.</p>
+              </div>
+              <a class="btn btn-primary btn-block" href="checkout.html">Proceed to demo checkout</a>
+            </aside>`;
+          root.querySelectorAll("input[data-idx]").forEach((inp) => inp.addEventListener("change", () => {
+            const cart = MTB.getCart();
+            cart[+inp.dataset.idx].qty = Number(inp.value);
+            MTB.setCart(cart);
+            draw();
+          }));
+          root.querySelectorAll("[data-remove]").forEach((b) => b.addEventListener("click", () => {
+            const cart = MTB.getCart();
+            cart.splice(+b.dataset.remove, 1);
+            MTB.setCart(cart);
+            draw();
+          }));
+        }
+        draw();
+      }
+    });
+
+  </script>
+</body>
+</html>

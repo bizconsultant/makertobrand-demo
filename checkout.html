@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout · MakerToBrand</title>
+  <meta name="description" content="Demo checkout. No card details are collected. Payment is simulated and shown as held in escrow.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main class="page-pad">
+    <div class="wrap-wide page-intro">
+      <span class="eyebrow ink">Demo checkout</span>
+      <h1>Pay through the site. We hold it until delivery.</h1>
+    </div>
+    <div class="wrap-wide cart-layout" id="root"></div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "cart",
+      after() {
+        const cart = MTB.getCart();
+        const root = document.getElementById("root");
+        if (!cart.length) {
+          root.innerHTML = `<div class="empty" style="grid-column:1/-1"><p>Nothing to check out.</p><a class="btn btn-dark" href="stock.html">Browse stock</a></div>`;
+          return;
+        }
+        let sub = 0;
+        const lines = cart.map((item) => {
+          const p = MTB.product(item.id);
+          const unit = MTB.tierPrice(p, item.qty);
+          const total = unit * item.qty;
+          sub += total;
+          return `<div class="summary-row"><span>${MTB.escapeHtml(p.name)} × ${item.qty}</span><span>${MTB.inr(total)}</span></div>`;
+        }).join("");
+        const s = MTB.getSession();
+        root.innerHTML = `
+          <form id="co" class="form-grid">
+            <h2 style="font-size:32px">Ship to</h2>
+            <p class="muted">Pre-filled sample address for the demo. Nothing is sent to a server.</p>
+            <div class="form-row">
+              <label class="field"><span>Studio</span><input name="studio" value="${s && s.name ? MTB.escapeHtml(s.name) : "Nila Atelier"}" required></label>
+              <label class="field"><span>City</span><input name="city" value="${s && s.city ? MTB.escapeHtml(s.city) : "Mumbai"}" required></label>
+            </div>
+            <label class="field"><span>Address</span><input name="addr" value="14, Kala Ghoda Lane, Fort" required></label>
+            <label class="field"><span>PIN</span><input name="pin" value="400001" required></label>
+            <h2 style="font-size:32px;margin-top:12px">Payment</h2>
+            <div class="escrow-callout">
+              <h3>No card details on this page</h3>
+              <p>A live build would open Razorpay here. This demo never collects a card, UPI, or account number. Use the button below to simulate a successful payment, held in escrow.</p>
+            </div>
+            <div class="note-box">Demo payment only — you will not be charged. The following screen treats the amount as held until delivery.</div>
+            <button class="btn btn-gold btn-block" type="submit" style="height:52px">Demo payment · hold ${MTB.inr(sub)}</button>
+          </form>
+          <aside class="summary-card">
+            <h3 style="font-size:28px;margin-bottom:12px">Order</h3>
+            ${lines}
+            <div class="summary-row total"><span>To be held</span><span>${MTB.inr(sub)}</span></div>
+            <p class="muted" style="margin-top:12px;font-size:13px">Platform commission is taken only when the payment is released to the manufacturer.</p>
+          </aside>`;
+        document.getElementById("co").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const id = "MTB-" + (1800 + Math.floor(Math.random() * 800));
+          const order = {
+            id, type: "stock", brand: (s && s.name) || "Nila Atelier",
+            items: cart, total: sub, commission: Math.round(sub * 0.045),
+            status: "held", statusLabel: "Payment held · awaiting production",
+            placed: "22 Nov 2026", eta: "10 Dec 2026"
+          };
+          const extras = JSON.parse(localStorage.getItem(MTB.KEY.orders) || "[]");
+          extras.unshift(order);
+          localStorage.setItem(MTB.KEY.orders, JSON.stringify(extras));
+          MTB.setCart([]);
+          location.href = "order.html?id=" + encodeURIComponent(id);
+        });
+      }
+    });
+
+  </script>
+</body>
+</html>

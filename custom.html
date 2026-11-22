@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Custom production · MakerToBrand</title>
+  <meta name="description" content="Post a production brief or review open custom orders. Manufacturers send quotes; brands compare and accept.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main class="page-pad">
+    <div class="wrap-wide page-intro">
+      <span class="eyebrow ink">Custom production</span>
+      <h1>Post a brief. Let the right floors come to you.</h1>
+      <p class="lead">Share a design, a quantity, a fabric and a date. Manufacturers send quotes. You compare, accept one, and pay a deposit — the rest is due on delivery.</p>
+    </div>
+    <div class="wrap-wide" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start" id="layout">
+      <section>
+        <h2 style="font-size:32px;margin-bottom:16px">Open briefs</h2>
+        <div id="rfq-list"></div>
+      </section>
+      <section>
+        <div class="summary-card" style="position:relative;top:0">
+          <h2 style="font-size:32px;margin-bottom:8px">Post a new brief</h2>
+          <p class="muted">Demo only — the brief stays on this device so you can show the flow.</p>
+          <form id="rfq-form" class="form-grid" style="margin-top:16px">
+            <label class="field"><span>Title</span><input name="title" required placeholder="e.g. 5,000 cotton kurtas, Jaipur print"></label>
+            <div class="form-row">
+              <label class="field"><span>Category</span>
+                <select name="category"><option>Kurtas</option><option>T-shirts</option><option>Dresses</option><option>Hoodies</option><option>Shirts</option><option>Kidswear</option><option>Festive</option><option>Other</option></select>
+              </label>
+              <label class="field"><span>Quantity</span><input name="qty" type="number" min="50" value="1000" required></label>
+            </div>
+            <label class="field"><span>Fabric</span><input name="fabric" required placeholder="e.g. 180 GSM organic cotton"></label>
+            <div class="form-row">
+              <label class="field"><span>Needed by</span><input name="deadline" type="date" required></label>
+              <label class="field"><span>Budget per piece (optional)</span><input name="budget" placeholder="₹400–480"></label>
+            </div>
+            <label class="field"><span>Size curve / notes</span><textarea name="notes" placeholder="Sizes, finishes, packing, certificates…"></textarea></label>
+            <div class="dropzone" id="drop" tabindex="0">
+              <strong>Upload a design or tech pack</strong>
+              <p style="margin:6px 0 0;font-size:13px">A mock upload only. Choose a file to show a name — nothing is sent.</p>
+              <input type="file" id="file" accept=".pdf,.png,.jpg,.jpeg,.ai,.svg" hidden>
+            </div>
+            <div class="note-box" id="invite-note" hidden></div>
+            <button class="btn btn-primary" type="submit">Publish this brief</button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+  <style>
+    @media (max-width: 980px) { #layout { grid-template-columns: 1fr !important; } }
+  </style>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "custom",
+      after() {
+        const invite = MTB.param("invite");
+        if (invite) {
+          const m = MTB.maker(invite);
+          const note = document.getElementById("invite-note");
+          if (m && note) {
+            note.hidden = false;
+            note.textContent = "This brief will be flagged for " + m.name + " in the demo story.";
+          }
+        }
+        function statusLabel(s) {
+          return { "quotes-in": "Quotes in", open: "Open for quotes", accepted: "Quote accepted" }[s] || s;
+        }
+        function drawList() {
+          const list = MTB.allRfqs();
+          document.getElementById("rfq-list").innerHTML = list.map((r) => `
+            <a href="rfq.html?id=${encodeURIComponent(r.id)}" class="maker-card" style="display:grid;grid-template-columns:1fr;margin-bottom:14px;transform:none">
+              <div class="card-body">
+                <div class="card-meta">
+                  <span class="badge ${r.status==="accepted"?"badge-ok":r.status==="open"?"badge-wait":"badge-held"}">${statusLabel(r.status)}</span>
+                  <span>${r.posted}</span>
+                  <span>${r.brand} · ${r.brandCity || ""}</span>
+                </div>
+                <h3 style="margin:8px 0 4px">${MTB.escapeHtml(r.title)}</h3>
+                <div class="card-meta">
+                  <span>${Number(r.qty).toLocaleString("en-IN")} pcs</span>
+                  <span>${MTB.escapeHtml(r.fabric)}</span>
+                  <span>By ${r.deadline}</span>
+                </div>
+                <p class="muted" style="margin:8px 0 0">${(r.quotes||[]).length} quote${(r.quotes||[]).length===1?"":"s"} · Budget ${r.budget || "open"}</p>
+              </div>
+            </a>`).join("");
+        }
+        const drop = document.getElementById("drop");
+        const file = document.getElementById("file");
+        drop.addEventListener("click", () => file.click());
+        file.addEventListener("change", () => {
+          if (file.files[0]) {
+            drop.classList.add("is-filled");
+            drop.querySelector("strong").textContent = "Attached: " + file.files[0].name;
+            drop.querySelector("p").textContent = "Mock only — the file stays on your computer.";
+          }
+        });
+        document.getElementById("rfq-form").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          const s = MTB.getSession();
+          const id = "rfq-" + Date.now().toString(36);
+          const deadline = fd.get("deadline");
+          const pretty = deadline ? new Date(deadline + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "";
+          const rec = {
+            id, title: fd.get("title"), brand: (s && s.name) || "Nila Atelier",
+            brandCity: (s && s.city) || "Mumbai", category: fd.get("category"),
+            qty: Number(fd.get("qty")), fabric: fd.get("fabric"),
+            deadline: pretty, posted: "22 Nov 2026", status: "open",
+            budget: fd.get("budget") || "Open", notes: fd.get("notes") || "",
+            quotes: [], invited: invite || null
+          };
+          const extras = MTB.getExtraRfqs();
+          extras.unshift(rec);
+          localStorage.setItem(MTB.KEY.rfqs, JSON.stringify(extras));
+          MTB.toast("Brief published");
+          location.href = "rfq.html?id=" + encodeURIComponent(id);
+        });
+        drawList();
+      }
+    });
+
+  </script>
+</body>
+</html>

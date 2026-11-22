@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · MakerToBrand</title>
+  <meta name="description" content="Demo sign-in. Continue as a brand, a manufacturer, or an admin — no password is collected.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main>
+    <div class="auth-split">
+      <div class="auth-visual">
+        <img src="images/factory-sew.jpg" alt="A calm clothing rail in a workroom">
+        <div class="caption">Continue as a brand, a mill, or the house.</div>
+      </div>
+      <div class="auth-panel">
+        <div class="inner">
+          <span class="eyebrow ink">Demo sign-in</span>
+          <h1>Welcome back.</h1>
+          <p class="muted">No password is collected. Use a prepared persona, or type any name and continue.</p>
+          <div class="form-grid" style="margin:24px 0">
+            <a class="btn btn-dark btn-block" href="#" id="as-brand">Continue as Nila Atelier · Brand</a>
+            <a class="btn btn-ghost btn-block" href="#" id="as-maker">Continue as Loom &amp; Lattice · Manufacturer</a>
+            <a class="btn btn-ghost btn-block" href="#" id="as-admin">Continue as Admin</a>
+          </div>
+          <p class="muted" style="font-size:12px;letter-spacing:.12em;text-transform:uppercase">Or enter a name</p>
+          <form id="login-form" class="form-grid">
+            <label class="field"><span>Name</span><input type="text" name="name" placeholder="Your studio name" required></label>
+            <label class="field"><span>I am a</span>
+              <select name="role">
+                <option value="brand">Brand owner</option>
+                <option value="manufacturer">Manufacturer</option>
+                <option value="admin">Platform admin</option>
+              </select>
+            </label>
+            <button class="btn btn-primary" type="submit">Enter</button>
+          </form>
+          <p class="muted" style="margin-top:18px;font-size:13px">New here? <a href="signup.html" style="text-decoration:underline">Create a demo account</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "login",
+      after() {
+        function go(persona) {
+          MTB.setSession(Object.assign({}, MTB_DATA.personas[persona]));
+          const dest = persona === "admin" ? "admin.html" : persona === "manufacturer" ? "dashboard-maker.html" : "dashboard-brand.html";
+          location.href = dest;
+        }
+        document.getElementById("as-brand").addEventListener("click", (e) => { e.preventDefault(); go("brand"); });
+        document.getElementById("as-maker").addEventListener("click", (e) => { e.preventDefault(); go("manufacturer"); });
+        document.getElementById("as-admin").addEventListener("click", (e) => { e.preventDefault(); go("admin"); });
+        document.getElementById("login-form").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          const role = fd.get("role");
+          MTB.setSession({ role, name: fd.get("name"), city: "Mumbai", plan: "Free" });
+          location.href = role === "admin" ? "admin.html" : role === "manufacturer" ? "dashboard-maker.html" : "dashboard-brand.html";
+        });
+      }
+    });
+
+  </script>
+</body>
+</html>

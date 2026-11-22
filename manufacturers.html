@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manufacturers · MakerToBrand</title>
+  <meta name="description" content="Browse garment manufacturers across Tiruppur, Jaipur, Ludhiana, Surat, Mumbai, Delhi NCR and Bengaluru.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main class="page-pad">
+    <div class="wrap-wide page-intro">
+      <span class="eyebrow ink">The directory</span>
+      <h1>Manufacturers, with a page of their own.</h1>
+      <p class="lead">Filter by city, craft or certification. Open a profile and you will find photographs, capacity, minimums and a way to write to them — a small website, for units that often have none.</p>
+    </div>
+    <div class="wrap-wide layout-filters">
+      <aside class="filter-box" id="filters"></aside>
+      <div>
+        <p class="muted" id="result-count"></p>
+        <div class="maker-grid" id="grid"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "makers",
+      after() {
+        const cities = [...new Set(MTB_DATA.manufacturers.map((m) => m.city))];
+        const cats = [...new Set(MTB_DATA.manufacturers.flatMap((m) => m.categories))];
+        const certs = [...new Set(MTB_DATA.manufacturers.flatMap((m) => m.certifications))];
+        const state = { city: new Set(), cat: new Set(), cert: new Set(), verified: false };
+        function box(title, items, key) {
+          return `<h3>${title}</h3>` + items.map((c) =>
+            `<label><input type="checkbox" data-key="${key}" value="${c}"> ${c}</label>`
+          ).join("");
+        }
+        document.getElementById("filters").innerHTML =
+          `<h3 style="margin-top:0">Show</h3>
+           <label><input type="checkbox" id="only-verified"> Verified only</label>` +
+          box("City", cities, "city") + box("Craft", cats, "cat") + box("Certification", certs, "cert") +
+          `<button class="btn btn-ghost btn-sm" type="button" id="clear" style="margin-top:16px">Clear filters</button>`;
+        function draw() {
+          const list = MTB_DATA.manufacturers.filter((m) => {
+            if (state.verified && !m.verified) return false;
+            if (state.city.size && !state.city.has(m.city)) return false;
+            if (state.cat.size && !m.categories.some((c) => state.cat.has(c))) return false;
+            if (state.cert.size && !m.certifications.some((c) => state.cert.has(c))) return false;
+            return true;
+          });
+          document.getElementById("result-count").textContent = list.length + " manufacturer" + (list.length === 1 ? "" : "s");
+          document.getElementById("grid").innerHTML = list.length ? list.map(MTB.makerCard).join("") : `<div class="empty">No manufacturers match those filters.</div>`;
+        }
+        document.getElementById("filters").addEventListener("change", (e) => {
+          const t = e.target;
+          if (t.id === "only-verified") { state.verified = t.checked; draw(); return; }
+          const key = t.getAttribute("data-key");
+          if (!key) return;
+          if (t.checked) state[key].add(t.value); else state[key].delete(t.value);
+          draw();
+        });
+        document.getElementById("clear").addEventListener("click", () => {
+          state.city.clear(); state.cat.clear(); state.cert.clear(); state.verified = false;
+          document.querySelectorAll("#filters input").forEach((i) => i.checked = false);
+          draw();
+        });
+        draw();
+      }
+    });
+
+  </script>
+</body>
+</html>
