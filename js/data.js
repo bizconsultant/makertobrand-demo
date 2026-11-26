@@ -1,18 +1,14 @@
-/* MakerToBrand — sample marketplace data (demo only) */
+/* MakerToBrand — sample marketplace data (demo only).
+   Prices, commission, minimum orders and key pictures live in js/settings.js. */
 window.MTB_DATA = {
-  commissionDefault: 0.03,
-  membershipPriceMonth: 2500,
-  membershipPriceYear: 25000,
   brandPlan: {
     id: "brand",
     name: "Brand",
-    priceMonth: 2500,
-    priceYear: 25000,
     blurb: "Full access to manufacturer search, quotes and secure payments. You pay only the product price at checkout.",
     fee: "No commission — you pay only the product price",
     features: [
       "Search and message manufacturers across India",
-      "Buy ready-made stock in bulk, from 100 pieces",
+      "Buy ready-made stock in bulk",
       "Post custom production briefs and compare quotes",
       "Payments held until delivery",
       "GST invoices, tracking and one-click re-orders",
@@ -24,28 +20,23 @@ window.MTB_DATA = {
   sellerPlan: {
     id: "seller",
     name: "Seller",
-    priceMonth: 2500,
-    priceYear: 25000,
-    blurb: "One plan for manufacturers and ready-made wholesalers. A 3% commission is taken from your payout on each sale.",
-    fee: "3% commission of the total bill, taken from your payout",
+    blurb: "One plan for manufacturers and ready-made wholesalers.",
+    fee: "",
     features: [
       "Manufacturer or wholesaler profile page (your mini website)",
       "Verified badge on your profile",
       "Ready-made listings and custom quote tools",
       "In-app messaging and payments held until delivery",
-      "Alerts on new production briefs",
-      "3% commission on each sale, deducted from your payout"
+      "Alerts on new production briefs"
     ]
   },
   designService: {
     title: "Garment Design & Tech-Sheet Support",
-    sampleNote: "Sample prices – final rates coming soon.",
-    moqNote: "Production minimum on MakerToBrand is 100 pieces.",
     lead: "Ask the platform team to design a garment and prepare the tech sheet — measurements, pattern details, fabric, trims and construction notes — before you brief a factory.",
     options: [
-      { id: "design", name: "Design only", price: 12000, unit: "per style", text: "Silhouette, colourways and a presentation board your factory can work from." },
-      { id: "tech", name: "Tech sheet only", price: 8000, unit: "per style", text: "A complete tech sheet: measurements and spec, pattern details, fabric, trims and construction notes." },
-      { id: "both", name: "Design + tech sheet", price: 18000, unit: "per style", popular: true, text: "Design and a factory-ready tech sheet together, so the brief is clear before production starts." }
+      { id: "design", name: "Design only", unit: "per style", text: "Silhouette, colourways and a presentation board your factory can work from." },
+      { id: "tech", name: "Tech sheet only", unit: "per style", text: "A complete tech sheet: measurements and spec, pattern details, fabric, trims and construction notes." },
+      { id: "both", name: "Design + tech sheet", unit: "per style", popular: true, text: "Design and a factory-ready tech sheet together, so the brief is clear before production starts." }
     ]
   },
   hubs: [
@@ -66,7 +57,6 @@ window.MTB_DATA = {
       state: "Tamil Nadu",
       tagline: "Knits, tees and activewear, made at scale.",
       categories: ["Knitwear", "Knits", "T-shirts", "Activewear"],
-      moq: 300,
       capacity: "1,20,000 pcs / month",
       leadTime: "18–25 days",
       established: 2009,
@@ -97,7 +87,6 @@ window.MTB_DATA = {
       state: "Rajasthan",
       tagline: "Hand block print, cotton kurtas and slow production.",
       categories: ["Ethnic wear", "Block print", "Kurtas", "Dresses", "Craft"],
-      moq: 150,
       capacity: "18,000 pcs / month",
       leadTime: "30–45 days",
       established: 2004,
@@ -126,7 +115,6 @@ window.MTB_DATA = {
       state: "Punjab",
       tagline: "Winter knits, hoodies and merino blends.",
       categories: ["Knitwear", "Woollens", "Hoodies", "Sweaters"],
-      moq: 250,
       capacity: "40,000 pcs / month",
       leadTime: "25–35 days",
       established: 1998,
@@ -155,7 +143,6 @@ window.MTB_DATA = {
       state: "Gujarat",
       tagline: "Festive sets, georgette and embellished evening wear.",
       categories: ["Festive", "Synthetics", "Occasion wear", "Ethnic wear"],
-      moq: 100,
       capacity: "25,000 pcs / month",
       leadTime: "20–30 days",
       established: 2012,
@@ -183,7 +170,6 @@ window.MTB_DATA = {
       state: "Maharashtra",
       tagline: "Contemporary Indian, organic cotton and handloom.",
       categories: ["Contemporary", "Handloom", "Organic"],
-      moq: 100,
       capacity: "8,000 pcs / month",
       leadTime: "28–40 days",
       established: 2016,
@@ -212,7 +198,6 @@ window.MTB_DATA = {
       state: "Delhi NCR",
       tagline: "Formal shirts, suiting and corporate programmes.",
       categories: ["Shirts", "Shirting", "Suiting", "Uniforms"],
-      moq: 400,
       capacity: "60,000 pcs / month",
       leadTime: "22–30 days",
       established: 2001,
@@ -241,7 +226,6 @@ window.MTB_DATA = {
       state: "Karnataka",
       tagline: "Sustainable wovens, linen and everyday shirts.",
       categories: ["Shirts", "Wovens", "Trousers", "Linen"],
-      moq: 200,
       capacity: "22,000 pcs / month",
       leadTime: "24–32 days",
       established: 2014,
@@ -270,7 +254,6 @@ window.MTB_DATA = {
       state: "Tamil Nadu",
       tagline: "Organic kidswear, soft jerseys and thoughtful finishes.",
       categories: ["Kidswear", "Organic", "Knits", "Knitwear"],
-      moq: 500,
       capacity: "70,000 pcs / month",
       leadTime: "20–28 days",
       established: 2011,
@@ -298,7 +281,6 @@ window.MTB_DATA = {
       state: "Karnataka",
       tagline: "Denim jeans, jackets and everyday indigo.",
       categories: ["Denim", "Jeans", "Jackets"],
-      moq: 200,
       capacity: "30,000 pcs / month",
       leadTime: "28–35 days",
       established: 2013,
@@ -326,7 +308,6 @@ window.MTB_DATA = {
       state: "West Bengal",
       tagline: "Tant cotton, kurtas and everyday ethnic wear.",
       categories: ["Ethnic wear", "Kurtas", "Craft", "Handloom"],
-      moq: 120,
       capacity: "12,000 pcs / month",
       leadTime: "25–35 days",
       established: 2007,
@@ -354,7 +335,6 @@ window.MTB_DATA = {
       state: "West Bengal",
       tagline: "Kidswear and school programmes, stitched with care.",
       categories: ["Kidswear", "Uniforms", "Knits"],
-      moq: 400,
       capacity: "45,000 pcs / month",
       leadTime: "22–30 days",
       established: 2005,
@@ -382,7 +362,6 @@ window.MTB_DATA = {
       state: "Tamil Nadu",
       tagline: "High-volume knitwear and active sets.",
       categories: ["Knitwear", "Activewear", "T-shirts"],
-      moq: 500,
       capacity: "2,00,000 pcs / month",
       leadTime: "16–22 days",
       established: 2002,
@@ -410,7 +389,6 @@ window.MTB_DATA = {
       state: "Punjab",
       tagline: "Sweaters, mid-weight knits and winter programmes.",
       categories: ["Knitwear", "Sweaters", "Woollens"],
-      moq: 250,
       capacity: "28,000 pcs / month",
       leadTime: "26–34 days",
       established: 1995,
@@ -438,7 +416,6 @@ window.MTB_DATA = {
       state: "Maharashtra",
       tagline: "Shirts and corporate uniforms, made in the city.",
       categories: ["Shirts", "Shirting", "Uniforms"],
-      moq: 350,
       capacity: "25,000 pcs / month",
       leadTime: "20–28 days",
       established: 2008,
@@ -466,7 +443,6 @@ window.MTB_DATA = {
       state: "Delhi NCR",
       tagline: "Denim trousers, casual bottoms and workwear.",
       categories: ["Denim", "Trousers", "Jeans"],
-      moq: 300,
       capacity: "40,000 pcs / month",
       leadTime: "24–32 days",
       established: 2010,
@@ -494,7 +470,6 @@ window.MTB_DATA = {
       state: "Karnataka",
       tagline: "Linen and poplin shirts with fibre paperwork.",
       categories: ["Shirts", "Linen", "Wovens", "Organic"],
-      moq: 180,
       capacity: "16,000 pcs / month",
       leadTime: "22–30 days",
       established: 2017,
@@ -523,7 +498,6 @@ window.MTB_DATA = {
       state: "Gujarat",
       tagline: "Occasion wear, lehengas and festive sets at a lower minimum.",
       categories: ["Ethnic wear", "Festive", "Occasion wear"],
-      moq: 100,
       capacity: "14,000 pcs / month",
       leadTime: "22–30 days",
       established: 2015,
@@ -551,7 +525,6 @@ window.MTB_DATA = {
       state: "Rajasthan",
       tagline: "Sanganer and bagru prints for dresses and kurtas.",
       categories: ["Ethnic wear", "Block print", "Dresses", "Kurtas"],
-      moq: 150,
       capacity: "15,000 pcs / month",
       leadTime: "30–40 days",
       established: 2001,
@@ -580,7 +553,6 @@ window.MTB_DATA = {
       makerId: "loom-lattice",
       category: "T-shirts",
       fabric: "180 GSM organic combed cotton",
-      moq: 300,
       colors: ["Ecru", "Ink", "Madder", "Sage", "Black"],
       sizes: ["S", "M", "L", "XL", "XXL"],
       tiers: [
@@ -598,7 +570,6 @@ window.MTB_DATA = {
       makerId: "loom-lattice",
       category: "Activewear",
       fabric: "160 GSM polyester dry-fit",
-      moq: 400,
       colors: ["Black", "Ink", "White", "Oxide"],
       sizes: ["S", "M", "L", "XL", "XXL"],
       tiers: [
@@ -616,7 +587,6 @@ window.MTB_DATA = {
       makerId: "desert-weave",
       category: "Kurtas",
       fabric: "Cotton cambric, azo-free bagru print",
-      moq: 150,
       colors: ["Indigo", "Madder", "Sand", "Olive"],
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       tiers: [
@@ -634,7 +604,6 @@ window.MTB_DATA = {
       makerId: "desert-weave",
       category: "Dresses",
       fabric: "Mulmul cotton, Sanganer print",
-      moq: 120,
       colors: ["Ivory indigo", "Rose sand", "Black gold"],
       sizes: ["XS", "S", "M", "L", "XL"],
       tiers: [
@@ -652,7 +621,6 @@ window.MTB_DATA = {
       makerId: "sutra-knitworks",
       category: "Hoodies",
       fabric: "320 GSM merino-cotton blend fleece",
-      moq: 250,
       colors: ["Charcoal", "Oat", "Forest", "Navy"],
       sizes: ["S", "M", "L", "XL", "XXL"],
       tiers: [
@@ -670,7 +638,6 @@ window.MTB_DATA = {
       makerId: "sutra-knitworks",
       category: "Sweaters",
       fabric: "Wool-acrylic cable knit",
-      moq: 200,
       colors: ["Cream", "Camel", "Ink", "Rust"],
       sizes: ["S", "M", "L", "XL"],
       tiers: [
@@ -688,7 +655,6 @@ window.MTB_DATA = {
       makerId: "riverbend",
       category: "Festive",
       fabric: "Georgette with thread and sequin work",
-      moq: 100,
       colors: ["Ruby", "Emerald", "Ivory gold", "Midnight"],
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       tiers: [
@@ -706,7 +672,6 @@ window.MTB_DATA = {
       makerId: "khadi-atelier",
       category: "Contemporary",
       fabric: "Handloom khadi, natural dyed",
-      moq: 100,
       colors: ["Raw", "Indigo", "Terracotta", "Olive"],
       sizes: ["XS", "S", "M", "L", "XL"],
       tiers: [
@@ -724,7 +689,6 @@ window.MTB_DATA = {
       makerId: "northline",
       category: "Shirting",
       fabric: "2-ply cotton oxford, 140 GSM",
-      moq: 400,
       colors: ["White", "Sky", "Pale pink", "Navy check"],
       sizes: ["38", "40", "42", "44", "46", "48"],
       tiers: [
@@ -742,7 +706,6 @@ window.MTB_DATA = {
       makerId: "northline",
       category: "Suiting",
       fabric: "Tropical wool blend, half-canvas",
-      moq: 100,
       colors: ["Navy", "Charcoal", "Mid grey"],
       sizes: ["36", "38", "40", "42", "44", "46"],
       tiers: [
@@ -759,7 +722,6 @@ window.MTB_DATA = {
       makerId: "canopy-mills",
       category: "Trousers",
       fabric: "Linen-cotton twill, 200 GSM",
-      moq: 200,
       colors: ["Sand", "Olive", "Ivory", "Charcoal"],
       sizes: ["28", "30", "32", "34", "36", "38", "40"],
       tiers: [
@@ -777,7 +739,6 @@ window.MTB_DATA = {
       makerId: "canopy-mills",
       category: "Shirts",
       fabric: "GOTS organic poplin, 120 GSM",
-      moq: 200,
       colors: ["White", "Sky", "Sage", "Stripe"],
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       tiers: [
@@ -795,7 +756,6 @@ window.MTB_DATA = {
       makerId: "coral-thread",
       category: "Kidswear",
       fabric: "200 GSM organic jersey, nickel-free trims",
-      moq: 500,
       colors: ["Butter", "Sky", "Berry", "Grey", "Navy"],
       sizes: ["6–12 M", "1–2 Y", "3–4 Y", "5–6 Y", "7–8 Y"],
       tiers: [
@@ -813,7 +773,6 @@ window.MTB_DATA = {
       makerId: "khadi-atelier",
       category: "Contemporary",
       fabric: "Cotton-twill with a soft-touch finish",
-      moq: 120,
       colors: ["Black", "Tan", "Forest"],
       sizes: ["S", "M", "L", "XL"],
       tiers: [
@@ -1071,14 +1030,14 @@ window.MTB_DATA = {
       id: "nizam-uddin",
       name: "Nizam Uddin",
       role: "Co-founder, Manufacturing",
-      photo: "images/nizam-uddin.webp",
+      photo: "",
       bio: "Nizam Uddin is a co-founder of MakerToBrand, with 20–25 years of experience in garment manufacturing. He brings that making-side view to the platform, so factories can present their work clearly and brands can source with a better sense of how a garment is actually made."
     },
     {
       id: "dipankar-bose",
       name: "Dipankar Bose",
       role: "Co-founder, Brand Building",
-      photo: "images/dipankar-bose.webp",
+      photo: "",
       bio: "Dipankar Bose is a co-founder of MakerToBrand, with 20–25 years of experience in brand building. He brings that brand-side view to the platform, so labels can find the right manufacturers and follow an order through with more confidence — as a considered partnership, not a leap of faith."
     }
   ],

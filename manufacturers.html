@@ -31,11 +31,6 @@
         <label class="field"><span>Max. minimum order</span>
           <select name="moq" id="moq">
             <option value="">Any MOQ</option>
-            <option value="100">Up to 100</option>
-            <option value="150">Up to 150</option>
-            <option value="250">Up to 250</option>
-            <option value="400">Up to 400</option>
-            <option value="800">Up to 800</option>
           </select>
         </label>
         <label class="field"><span>Sort</span>
@@ -58,6 +53,7 @@
   </main>
 
   <footer id="site-footer"></footer>
+  <script src="js/settings.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
@@ -66,6 +62,14 @@
       after() {
         const hubs = MTB_DATA.hubs.map((h) => h.city);
         const citySel = document.getElementById("city");
+        const moqSel = document.getElementById("moq");
+        const floor = MTB.defaultMoq();
+        [floor, 150, 250, 400, 800].filter((v, i, a) => a.indexOf(v) === i).sort((a,b) => a - b).forEach((v) => {
+          const o = document.createElement("option");
+          o.value = String(v);
+          o.textContent = "Up to " + v;
+          moqSel.appendChild(o);
+        });
         hubs.forEach((c) => {
           const o = document.createElement("option");
           o.value = c; o.textContent = c;

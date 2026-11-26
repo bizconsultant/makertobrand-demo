@@ -18,7 +18,7 @@
     <div class="wrap-wide page-intro">
       <span class="eyebrow ink">Manufacturer dashboard</span>
       <h1 id="hello">Enquiries, quotes, orders and earnings.</h1>
-      <p class="lead">The view a factory owner would open every morning — work coming in, money still held, money already released. You are on the ₹2,500 monthly membership. A 3% commission of the total bill is taken from your payout when payment is released.</p>
+      <p class="lead" id="maker-lead">The view a factory owner would open every morning — work coming in, money still held, money already released.</p>
     </div>
     <div class="wrap-wide">
       <div class="kpi-grid" id="kpis"></div>
@@ -33,6 +33,7 @@
   </main>
 
   <footer id="site-footer"></footer>
+  <script src="js/settings.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
@@ -43,6 +44,7 @@
         const makerId = s.makerId || "loom-lattice";
         const me = MTB.maker(makerId);
         document.getElementById("hello").textContent = (me ? me.name : s.name) + " · enquiries, orders and earnings.";
+        document.getElementById("maker-lead").textContent = "The view a factory owner would open every morning — work coming in, money still held, money already released. You are on the " + MTB.inr(MTB.membershipMonth()) + " monthly membership. A " + MTB.commissionLabel() + " commission of the total bill is taken from your payout when payment is released.";
         const myOrders = MTB.allOrders().filter((o) => !o.makerId || o.makerId === makerId);
         function payout(o) {
           if (o.makerPayout != null) return o.makerPayout;
@@ -108,9 +110,9 @@
                 <td>${heldAmt === "—" ? "—" : MTB.inr(heldAmt)}</td>
               </tr>`;
             }).join("");
-            return `<p class="muted">Your membership is ₹2,500 a month. A 3% commission of the total bill is taken from your payout when payment is released. Brands never see this fee — they pay only the product price.</p>
+            return `<p class="muted">Your membership is ${MTB.inr(MTB.membershipMonth())} a month. A ${MTB.commissionLabel()} commission of the total bill is taken from your payout when payment is released. Brands never see this fee — they pay only the product price.</p>
               <p style="margin:16px 0"><a class="btn btn-ghost btn-sm" href="manufacturer.html?id=${makerId}">View your public profile</a></p>
-              <div class="table-wrap"><table class="data"><thead><tr><th>Order</th><th>Gross</th><th>3% commission</th><th>Released to you</th><th>Still held</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+              <div class="table-wrap"><table class="data"><thead><tr><th>Order</th><th>Gross</th><th>${MTB.commissionLabel()} commission</th><th>Released to you</th><th>Still held</th></tr></thead><tbody>${rows}</tbody></table></div>`;
           }
                 };
         let tab = "enquiries";

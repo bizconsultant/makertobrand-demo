@@ -17,6 +17,7 @@
   <main class="page-pad"><div class="wrap-wide" id="root"></div></main>
 
   <footer id="site-footer"></footer>
+  <script src="js/settings.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
@@ -79,7 +80,7 @@
                 <div class="amount">${MTB.inr(q.price)} <span style="font-size:14px;font-family:var(--font-sans)">/ pc</span></div>
                 <p class="muted">Line ${MTB.inr(line)} · ${q.lead} · ${q.deposit}% deposit (${MTB.inr(deposit)})</p>
                 <p style="margin-top:8px">${MTB.qcBadge()} <span class="muted">Included for brand subscribers</span></p>
-                ${isMaker ? (function(){ const f = MTB.feeFor(line); return `<p class="muted">3% platform fee ${MTB.inr(f.fee)} · you receive ${MTB.inr(f.makerPayout)}</p>`; })() : ""}
+                ${isMaker ? (function(){ const f = MTB.feeFor(line); return `<p class="muted">${MTB.commissionLabel()} platform fee ${MTB.inr(f.fee)} · you receive ${MTB.inr(f.makerPayout)}</p>`; })() : ""}
                 <p>${MTB.escapeHtml(q.note)}</p>
                 ${isAcc ? `<span class="badge badge-ok">Accepted</span> <a class="btn btn-gold btn-sm" href="order.html?id=MTB-1810" style="margin-top:10px">View the order</a>` :
                   (acc ? "" : `<button class="btn btn-primary" data-accept="${q.id}" type="button">Accept &amp; pay deposit</button>`)}
@@ -111,7 +112,7 @@
               if (!el) return;
               if (!price) { el.textContent = "Enter a unit price to see your payout after the platform fee."; return; }
               const f = MTB.feeFor(line);
-              el.textContent = "Line " + MTB.inr(line) + " · 3% platform fee " + MTB.inr(f.fee) + " · you receive " + MTB.inr(f.makerPayout);
+              el.textContent = "Line " + MTB.inr(line) + " · " + MTB.commissionLabel() + " platform fee " + MTB.inr(f.fee) + " · you receive " + MTB.inr(f.makerPayout);
             }
             const priceInp = document.querySelector('#quote-form [name="price"]');
             if (priceInp) priceInp.addEventListener("input", previewNet);

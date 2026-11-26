@@ -23,13 +23,13 @@
     <section style="padding-top:32px">
       <div class="wrap-wide split-paths">
         <div class="path-card" style="min-height:320px">
-          <img src="images/fashion-browse.jpg" alt="Browsing a clothing rail">
+          <img src="images/fashion-browse.jpg" alt="Browsing a clothing rail" data-settings-image="howItWorksBrand">
           <span class="eyebrow">For brand owners</span>
           <h3>Find, brief, order.</h3>
           <p>Search manufacturers by city and craft. Buy stock in a cart, or post a production brief and compare quotes.</p>
         </div>
         <div class="path-card" style="min-height:320px">
-          <img src="images/tailor-hands.jpg" alt="A tailored jacket on a form">
+          <img src="images/tailor-hands.jpg" alt="A tailored jacket on a form" data-settings-image="howItWorksMaker">
           <span class="eyebrow">For manufacturers</span>
           <h3>A page, a shop, a pipeline.</h3>
           <p>Your profile is a mini website — photographs, capacity, minimums, certifications. Quote on briefs, take orders, and follow the work through to delivery.</p>
@@ -45,7 +45,7 @@
         </div>
         <div class="steps">
           <div class="step"><div class="step-num">01</div><div><h3>Find a factory</h3><p class="muted">Search by city, craft and minimum order. Open a profile, look at past work, and start a conversation.</p></div></div>
-          <div class="step"><div class="step-num">02</div><div><h3>Send a brief, or order stock</h3><p class="muted">Buy ready-made from 100 pieces, or post a custom brief. Optional design and tech-sheet support can be added before the brief goes out.</p></div></div>
+          <div class="step"><div class="step-num">02</div><div><h3>Send a brief, or order stock</h3><p class="muted" id="how-moq-step">Buy ready-made stock, or post a custom brief. Optional design and tech-sheet support can be added before the brief goes out.</p></div></div>
           <div class="step"><div class="step-num">03</div><div><h3>Compare quotes</h3><p class="muted">Factories reply with a unit price, a lead time and a note. The brand accepts one and the order is placed on the site.</p></div></div>
           <div class="step"><div class="step-num">04</div><div><h3>QC checks</h3><p class="muted">A QC Master and merchandisers check fabric, the pattern sheet, measurements and finishing on the brand’s behalf.</p></div></div>
           <div class="step"><div class="step-num">05</div><div><h3>Delivery</h3><p class="muted">Both sides follow the same tracking. When the brand confirms receipt, payment is released to the factory.</p></div></div>
@@ -117,10 +117,17 @@
   </main>
 
   <footer id="site-footer"></footer>
+  <script src="js/settings.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
-    MTB.init({ page: "how" });
+    MTB.init({
+      page: "how",
+      after() {
+        const el = document.getElementById("how-moq-step");
+        if (el) el.textContent = "Buy ready-made from " + MTB.defaultMoq() + " pieces, or post a custom brief. Optional design and tech-sheet support can be added before the brief goes out.";
+      }
+    });
 
   </script>
 </body>

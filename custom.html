@@ -35,7 +35,7 @@
               <label class="field"><span>Category</span>
                 <select name="category"><option>Kurtas</option><option>T-shirts</option><option>Dresses</option><option>Hoodies</option><option>Shirts</option><option>Kidswear</option><option>Festive</option><option>Other</option></select>
               </label>
-              <label class="field"><span>Quantity (minimum 100)</span><input name="qty" type="number" min="100" value="1000" required></label>
+              <label class="field"><span id="qty-label">Quantity</span><input name="qty" id="qty-input" type="number" min="1" value="1000" required></label>
             </div>
             <label class="field"><span>Fabric</span><input name="fabric" required placeholder="e.g. 180 GSM organic cotton"></label>
             <div class="form-row">
@@ -45,7 +45,7 @@
             <label class="field"><span>Size curve / notes</span><textarea name="notes" placeholder="Sizes, finishes, packing, certificates…"></textarea></label>
             <fieldset class="design-add" id="design-support">
               <legend>Add design support</legend>
-              <p class="muted" style="margin:0 0 8px">Optional. The platform team can design the garment and prepare the tech sheet. <a href="design.html">View the service</a>. Sample prices – final rates coming soon.</p>
+              <p class="muted" style="margin:0 0 8px" id="design-form-note">Optional. The platform team can design the garment and prepare the tech sheet. <a href="design.html">View the service</a>.</p>
               <div id="design-options"></div>
             </fieldset>
             <div class="dropzone" id="drop" tabindex="0">
@@ -65,6 +65,7 @@
   </style>
 
   <footer id="site-footer"></footer>
+  <script src="js/settings.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
@@ -72,6 +73,16 @@
       page: "custom",
       after() {
         const invite = MTB.param("invite");
+        const moq = MTB.defaultMoq();
+        const qtyLabel = document.getElementById("qty-label");
+        const qtyInput = document.getElementById("qty-input");
+        if (qtyLabel) qtyLabel.textContent = "Quantity (minimum " + moq + ")";
+        if (qtyInput) { qtyInput.min = String(moq); if (Number(qtyInput.value) < moq) qtyInput.value = moq; }
+        const note = document.getElementById("design-form-note");
+        if (note) {
+          const sample = (MTB_DATA.designService && MTB_DATA.designService.sampleNote) || "";
+          note.innerHTML = "Optional. The platform team can design the garment and prepare the tech sheet. <a href=\"design.html\">View the service</a>. " + MTB.escapeHtml(sample);
+        }
         const designSvc = MTB_DATA.designService || { options: [] };
         const pre = MTB.param("design");
         const optBox = document.getElementById("design-options");

@@ -6,7 +6,8 @@
     blocked: "mtb_blocked",
     rfqs: "mtb_extra_rfqs",
     accepted: "mtb_accepted",
-    orders: "mtb_extra_orders"
+    orders: "mtb_extra_orders",
+    settings: "mtb_settings_override"
   };
 
   const MTB = {
@@ -279,10 +280,140 @@
   function hasPaidOrderWith(brandName, makerId) {
     return partnerOrders(brandName, makerId).length > 0;
   }
-  function loyaltyRate() { return 0.03; }
+  function defaultSettings() {
+    return Object.assign({}, window.MTB_SETTINGS || {});
+  }
+  function getSettingsOverride() {
+    try { return JSON.parse(localStorage.getItem(KEY.settings) || "null"); }
+    catch { return null; }
+  }
+  function setSettingsOverride(obj) {
+    if (!obj) localStorage.removeItem(KEY.settings);
+    else localStorage.setItem(KEY.settings, JSON.stringify(obj));
+  }
+  function mergeSettings(base, over) {
+    if (!over) return cloneSettings(base);
+    const out = cloneSettings(base);
+    ["membershipPriceMonth", "membershipPriceYear", "sellerCommissionPercent",
+     "designPriceDesignOnly", "designPriceTechSheetOnly", "designPriceDesignAndTechSheet",
+     "designSampleNote", "defaultMoq"].forEach((k) => {
+      if (over[k] != null && over[k] !== "") out[k] = over[k];
+    });
+    out.manufacturerMoqs = Object.assign({}, base.manufacturerMoqs || {}, over.manufacturerMoqs || {});
+    out.productMoqs = Object.assign({}, base.productMoqs || {}, over.productMoqs || {});
+    out.images = Object.assign({}, base.images || {});
+    const overImgs = over.images || {};
+    Object.keys(overImgs).forEach((key) => {
+      const v = overImgs[key];
+      if (v && typeof v === "object") out.images[key] = Object.assign({}, out.images[key] && typeof out.images[key] === "object" ? out.images[key] : { path: out.images[key] || "" }, v);
+      else if (v) out.images[key] = v;
+    });
+    return out;
+  }
+  function cloneSettings(obj) {
+    return JSON.parse(JSON.stringify(obj || {}));
+  }
+  function settings() {
+    return mergeSettings(defaultSettings(), getSettingsOverride());
+  }
+  function num(v, fallback) {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  }
+  function membershipMonth() { return num(settings().membershipPriceMonth, 0); }
+  function membershipYear() { return num(settings().membershipPriceYear, 0); }
+  function commissionPercent() { return num(settings().sellerCommissionPercent, 0); }
+  function commissionLabel() { return commissionPercent() + "%"; }
+  function defaultMoq() { return Math.max(1, num(settings().defaultMoq, 100)); }
+  function imageSrc(key) {
+    const v = (settings().images || {})[key];
+    if (!v) return "";
+    if (typeof v === "object") return v.dataUrl || v.path || "";
+    return v;
+  }
+  function imagePath(key) {
+    const v = (settings().images || {})[key];
+    if (!v) return "";
+    if (typeof v === "object") return v.path || "";
+    return v;
+  }
+  function applyDomImages() {
+    document.querySelectorAll("[data-settings-image]").forEach((el) => {
+      const src = imageSrc(el.getAttribute("data-settings-image"));
+      if (src) el.setAttribute("src", src);
+    });
+  }
+  function applySettings() {
+    const S = settings();
+    const data = window.MTB_DATA || (window.MTB_DATA = {});
+    const month = membershipMonth();
+    const year = membershipYear();
+    const pctNum = commissionPercent();
+    const rate = pctNum / 100;
+    const moqFloor = defaultMoq();
+
+    data.commissionDefault = rate;
+    data.membershipPriceMonth = month;
+    data.membershipPriceYear = year;
+
+    const bp = data.brandPlan || (data.brandPlan = {});
+    bp.priceMonth = month;
+    bp.priceYear = year;
+    bp.fee = "No commission — you pay only the product price";
+    bp.blurb = bp.blurb || "Full access to manufacturer search, quotes and secure payments. You pay only the product price at checkout.";
+    bp.features = (bp.features || []).map((f) =>
+      /Buy ready-made stock in bulk/.test(f) ? ("Buy ready-made stock in bulk, from " + moqFloor + " pieces") : f
+    );
+
+    const sp = data.sellerPlan || (data.sellerPlan = {});
+    sp.priceMonth = month;
+    sp.priceYear = year;
+    sp.fee = commissionLabel() + " commission of the total bill, taken from your payout";
+    sp.blurb = "One plan for manufacturers and ready-made wholesalers. A " + commissionLabel() + " commission is taken from your payout on each sale.";
+    const sellerFeatures = (sp.features || []).filter((f) => !/commission on each sale/.test(f));
+    sellerFeatures.push(commissionLabel() + " commission on each sale, deducted from your payout");
+    sp.features = sellerFeatures;
+
+    const d = data.designService || (data.designService = {});
+    d.sampleNote = S.designSampleNote || "Sample prices – final rates coming soon.";
+    d.moqNote = "Production minimum on MakerToBrand is " + moqFloor + " pieces.";
+    const priceMap = {
+      design: num(S.designPriceDesignOnly, 0),
+      tech: num(S.designPriceTechSheetOnly, 0),
+      both: num(S.designPriceDesignAndTechSheet, 0)
+    };
+    (d.options || []).forEach((o) => { if (priceMap[o.id] != null) o.price = priceMap[o.id]; });
+
+    const makerMoqs = S.manufacturerMoqs || {};
+    (data.manufacturers || []).forEach((m) => {
+      const raw = makerMoqs[m.id] != null ? num(makerMoqs[m.id], moqFloor) : moqFloor;
+      m.moq = Math.max(moqFloor, raw);
+    });
+    const productMoqs = S.productMoqs || {};
+    (data.products || []).forEach((p) => {
+      const raw = productMoqs[p.id] != null ? num(productMoqs[p.id], moqFloor) : moqFloor;
+      const next = Math.max(moqFloor, raw);
+      if (p.tiers && p.tiers.length) {
+        const first = p.tiers[0];
+        if (next > first.min) first.min = next;
+        if (first.max != null && first.max < first.min) first.max = first.min;
+      }
+      p.moq = next;
+    });
+
+    const founders = data.founders || [];
+    const nizam = founders.find((f) => f.id === "nizam-uddin");
+    const dipankar = founders.find((f) => f.id === "dipankar-bose");
+    if (nizam) nizam.photo = imageSrc("founderNizam");
+    if (dipankar) dipankar.photo = imageSrc("founderDipankar");
+
+    applyDomImages();
+    return S;
+  }
+  function loyaltyRate() { return sellerFeeRate(); }
   function pct(rate) { return Math.round(rate * 100) + "%"; }
   function sellerFeeRate() {
-    return (window.MTB_DATA && MTB_DATA.commissionDefault) || 0.03;
+    return commissionPercent() / 100;
   }
   function feeFor(merchandise) {
     const amount = Math.round(Number(merchandise) || 0);
@@ -294,7 +425,7 @@
       feeWaived: false,
       brandPays: amount,
       makerPayout: amount - fee,
-      label: "3% platform fee"
+      label: commissionLabel() + " platform fee"
     };
   }
   function normalizeOrder(o) {
@@ -407,6 +538,7 @@
 
   function init(opts) {
     MTB.page = (opts && opts.page) || "home";
+    applySettings();
     wrapChrome();
     renderDemoBar();
     renderHeader();
@@ -545,6 +677,8 @@
   window.MTB = {
     init, inr, param, getSession, setSession, getCart, setCart, addToCart,
     maker, product, rfq, allRfqs, allOrders, getExtraRfqs, getBlocked, setBlocked,
-    tierPrice, toast, stars, escapeHtml, requireRole, makerCard, productCard, partnerOrders, hasPaidOrderWith, loyaltyRate, pct, sellerFeeRate, feeFor, cartMerchandise, cartFeeBreakdown, inDelhiNcr, makerMatchesCategory, makerMatchesQuery, makerContacts, maskContact, contactUnlocked, protectBadge, qcBadge, qcReportHtml, founderCard, linkedinIcon, qcStandardHtml, KEY, $, $$
+    tierPrice, toast, stars, escapeHtml, requireRole, makerCard, productCard, partnerOrders, hasPaidOrderWith, loyaltyRate, pct, sellerFeeRate, feeFor, cartMerchandise, cartFeeBreakdown, inDelhiNcr, makerMatchesCategory, makerMatchesQuery, makerContacts, maskContact, contactUnlocked, protectBadge, qcBadge, qcReportHtml, founderCard, linkedinIcon, qcStandardHtml, KEY, $, $$,
+    settings, defaultSettings, getSettingsOverride, setSettingsOverride, applySettings, applyDomImages,
+    membershipMonth, membershipYear, commissionPercent, commissionLabel, defaultMoq, imageSrc, imagePath
   };
 })();

@@ -1422,3 +1422,44 @@ hr.sep { border: 0; border-top: 1px solid var(--line); margin: 32px 0; }
   .include-grid, .design-price-grid { grid-template-columns: 1fr; }
   .design-hero-copy { padding: 48px 24px 36px; }
 }
+
+/* Admin: edit rates & content */
+.admin-edit { max-width: 980px; }
+.edit-browser-note { margin: 0 0 28px; font-weight: 500; }
+.help-panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 28px 28px 24px;
+  margin-bottom: 36px;
+}
+.help-panel h2 { font-size: clamp(28px, 3vw, 36px); margin: 6px 0 16px; }
+.help-panel ol { margin: 0 0 16px; padding-left: 1.3em; }
+.help-panel li { margin: 0 0 8px; }
+.edit-section { margin: 0 0 36px; }
+.edit-section h2 { font-size: clamp(26px, 3vw, 36px); margin: 6px 0 16px; }
+.img-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 8px;
+}
+.img-edit {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+}
+.img-edit h3 { font-size: 18px; margin: 0 0 10px; }
+.img-edit-preview {
+  height: 140px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #eee;
+  margin-bottom: 12px;
+}
+.img-edit-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.edit-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 24px; }
+@media (max-width: 800px) {
+  .img-edit-grid { grid-template-columns: 1fr; }
+}

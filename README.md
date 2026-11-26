@@ -18,15 +18,15 @@ npx serve .
 
 ## What you can click through
 
-- Marketing home with manufacturer search, how-it-works, and a single ₹2,500/month membership for brands, manufacturers and wholesalers
+- Marketing home with manufacturer search, how-it-works, and a single monthly membership for brands, manufacturers and wholesalers (the figure lives in `js/settings.js`)
 - Open sign-up and sign-in (demo only — choose Brand, Manufacturer, or Admin)
 - Manufacturer directory and profile pages (a mini website for factories that often have none)
-- Ready-made wholesale catalogue, product pages with price breaks and a 100-piece minimum order, cart, and a mock checkout
+- Ready-made wholesale catalogue, product pages with price breaks and a minimum order (set in `js/settings.js`), cart, and a mock checkout
 - Custom production briefs, quote comparison, accept-and-pay-a-deposit
 - Payments described as held until delivery (intended partner: Razorpay). Checkout uses a **Demo payment** button and never collects card details
 - About the owners (Nizam Uddin and Dipankar Bose, details in `js/data.js`) and a Quality Control service page
 - Garment Design & Tech-Sheet Support for brands (sample prices, added to a custom brief)
-- Brand dashboard (brand membership only — no seller commission), manufacturer dashboard (₹2,500 plus 3% of the bill taken from payout), in-app messaging, and an admin view with commissions, membership revenue and “Block account”
+- Brand dashboard (brand membership only — no seller commission), manufacturer dashboard (membership plus a commission taken from payout), in-app messaging, and an admin view with commissions, membership revenue, “Block account”, and **Edit rates & content**
 
 A small **Demo – sample data** label sits at the top of every page, with a “View as” switcher for presenting the three roles.
 
@@ -35,3 +35,7 @@ Photographs are royalty-free images from Unsplash and Pexels, stored in `/images
 ## Stack
 
 HTML, CSS and JavaScript only. No build step. Cart, session and a few demo actions use `localStorage` on the viewer’s device.
+
+## Changing prices, minimums and pictures
+
+All rates, minimum orders and key pictures live in [`js/settings.js`](js/settings.js). Edit that file on GitHub in your browser, or try a change in the Admin **Edit rates & content** screen (that trial stays in your browser only). A plain-words guide is in [HOW-TO-EDIT.md](HOW-TO-EDIT.md).

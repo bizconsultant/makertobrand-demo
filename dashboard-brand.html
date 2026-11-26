@@ -18,7 +18,7 @@
     <div class="wrap-wide page-intro">
       <span class="eyebrow ink">Brand dashboard</span>
       <h1 id="hello">Your orders, briefs and conversations.</h1>
-      <p class="lead" id="brand-lead">A quiet desk for a label that buys both stock and custom work. You pay a ₹2,500 monthly plan, and only the product price at checkout — never a commission. Need a style designed or a tech sheet written? Add garment design support to a brief. GST invoices, tracking and re-orders are included only for orders paid on the site.</p>
+      <p class="lead" id="brand-lead">A quiet desk for a label that buys both stock and custom work. You pay a monthly plan, and only the product price at checkout — never a commission. Need a style designed or a tech sheet written? Add garment design support to a brief. GST invoices, tracking and re-orders are included only for orders paid on the site.</p>
     </div>
     <div class="wrap-wide">
       <p class="muted" style="margin:0 0 20px">Optional add-on: <a href="design.html">Garment Design &amp; Tech-Sheet Support</a> — sample prices, added when you post a custom brief.</p>
@@ -33,6 +33,7 @@
   </main>
 
   <footer id="site-footer"></footer>
+  <script src="js/settings.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
@@ -41,7 +42,8 @@
       after() {
         const s = MTB.requireRole("brand");
         document.getElementById("hello").textContent = s.name + " · orders, briefs and conversations.";
-        if (s.plan) document.getElementById("brand-lead").textContent = s.name + " is on the Brand plan at ₹2,500 a month. You pay only the product price at checkout — never a commission. GST invoices, tracking and re-orders are included only for orders paid on the site.";
+        const month = MTB.inr(MTB.membershipMonth());
+        document.getElementById("brand-lead").textContent = (s.plan ? (s.name + " is on the Brand plan at " + month + " a month. ") : ("You pay a " + month + " monthly plan, and ")) + "You pay only the product price at checkout — never a commission. GST invoices, tracking and re-orders are included only for orders paid on the site.";
         const orders = MTB.allOrders();
         const rfqs = MTB.allRfqs();
         const openHold = orders.filter((o) => o.status === "held" || o.status === "deposit" || o.status === "inspection").reduce((a,o) => a + (o.deposit || o.total), 0);

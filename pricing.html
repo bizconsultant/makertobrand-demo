@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Memberships · MakerToBrand</title>
-  <meta name="description" content="One membership at ₹2,500 a month for brands, manufacturers and wholesalers.">
+  <meta name="description" id="pricing-desc" content="One membership for brands, manufacturers and wholesalers.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
     <div class="wrap page-intro" style="text-align:center">
       <span class="eyebrow ink">Membership</span>
       <h1>One plan for everyone on the marketplace.</h1>
-      <p class="lead" style="margin:12px auto 0">Brands, manufacturers and ready-made wholesalers all pay ₹2,500 a month. Yearly billing is two months free. Prices in Indian rupees.</p>
+      <p class="lead" id="pricing-lead" style="margin:12px auto 0">Brands, manufacturers and ready-made wholesalers all pay a monthly membership. Yearly billing is two months free. Prices in Indian rupees.</p>
       <div class="billing-toggle" style="margin-top:28px" id="billing">
         <button type="button" data-bill="month" class="is-on">Monthly</button>
         <button type="button" data-bill="year">Yearly · two months free</button>
@@ -32,7 +32,7 @@
           <h2>Find factories, brief them, and order safely.</h2>
           <ul class="include-list">
             <li>Search and message manufacturers across India</li>
-            <li>Buy ready-made stock from a 100-piece minimum</li>
+            <li id="pricing-moq-item">Buy ready-made stock from a minimum order</li>
             <li>Post custom production briefs and compare quotes</li>
             <li>Payments held until delivery</li>
             <li>GST invoices, tracking and one-click re-orders</li>
@@ -57,6 +57,7 @@
   </main>
 
   <footer id="site-footer"></footer>
+  <script src="js/settings.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
@@ -64,9 +65,14 @@
       page: "pricing",
       after() {
         let bill = "month";
+        const monthAmt = MTB.membershipMonth();
+        const yearAmt = MTB.membershipYear();
+        document.querySelector("#pricing-desc").setAttribute("content", "One membership at " + MTB.inr(monthAmt) + " a month for brands, manufacturers and wholesalers.");
+        document.getElementById("pricing-lead").textContent = "Brands, manufacturers and ready-made wholesalers all pay " + MTB.inr(monthAmt) + " a month. Yearly billing is two months free. Prices in Indian rupees.";
+        document.getElementById("pricing-moq-item").textContent = "Buy ready-made stock from a " + MTB.defaultMoq() + "-piece minimum";
         function draw() {
-          const month = MTB_DATA.membershipPriceMonth;
-          const year = MTB_DATA.membershipPriceYear;
+          const month = monthAmt;
+          const year = yearAmt;
           const amt = bill === "year" ? year : month;
           const suffix = bill === "year" ? "<span> / year</span>" : "<span> / month</span>";
           document.getElementById("common-plan").innerHTML = `<article class="plan is-popular">
