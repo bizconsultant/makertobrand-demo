@@ -544,6 +544,8 @@
     renderHeader();
     renderFooter();
     if (typeof opts === "object" && typeof opts.after === "function") opts.after();
+    if (window.MTB) window.MTB.page = MTB.page;
+    if (window.MTB && typeof window.MTB.renderAssistant === "function") window.MTB.renderAssistant();
   }
 
 

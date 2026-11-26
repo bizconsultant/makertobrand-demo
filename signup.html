@@ -67,14 +67,17 @@
   <script src="js/settings.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/assistant-faq.js"></script>
+  <script src="js/assistant.js"></script>
   <script>
     MTB.init({
       page: "signup",
       after() {
-        let role = "brand";
+        let role = MTB.param("role") === "manufacturer" ? "manufacturer" : "brand";
         const monthLabel = MTB.inr(MTB.membershipMonth()) + " a month";
         document.getElementById("signup-brand-blurb").textContent = monthLabel + ". Source stock, post briefs, pay through the site — with no commission.";
         document.getElementById("signup-seller-blurb").textContent = monthLabel + ". List your unit or wholesale stock, quote on work, and receive orders.";
+        document.querySelectorAll(".role-opt").forEach((b) => b.classList.toggle("is-on", b.getAttribute("data-role") === role));
         function drawPlans() {
           const box = document.getElementById("plan-box");
           const btn = document.getElementById("join-btn");

@@ -28,6 +28,7 @@
         <button type="button" data-tab="orders">Orders</button>
         <button type="button" data-tab="commission">Revenue</button>
         <button type="button" data-tab="edit">Edit rates &amp; content</button>
+        <button type="button" data-tab="questions">Pre-signup questions</button>
       </div>
       <div id="panel"></div>
     </div>
@@ -37,6 +38,8 @@
   <script src="js/settings.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/assistant-faq.js"></script>
+  <script src="js/assistant.js"></script>
   <script>
     MTB.init({
       page: "admin",
@@ -214,9 +217,27 @@
                 </div>
               </form>
             </div>`;
+          },
+          questions() {
+            const list = (window.MTB_ASSISTANT && MTB_ASSISTANT.listQuestions()) || [];
+            const rows = list.map((q) => {
+              const when = q.at ? new Date(q.at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }) : "—";
+              const who = q.role === "manufacturer" ? "Manufacturer or wholesaler" : "Brand";
+              return `<tr>
+                <td>${when}</td>
+                <td>${MTB.escapeHtml(q.name || "—")}</td>
+                <td>${MTB.escapeHtml(q.contact || "—")}</td>
+                <td>${who}</td>
+                <td>${MTB.escapeHtml(q.question || "")}</td>
+                <td>${MTB.escapeHtml(q.page || "")}</td>
+              </tr>`;
+            }).join("");
+            const table = list.length ? `<div class="table-wrap"><table class="data"><thead><tr><th>When</th><th>Name</th><th>Phone or email</th><th>Side</th><th>Question</th><th>Page</th></tr></thead><tbody>${rows}</tbody></table></div>
+              <p style="margin-top:12px"><button class="btn btn-ghost btn-sm" type="button" id="clear-questions">Clear all</button></p>` : `<p class="muted">No pre-signup questions yet. When a visitor uses Ask MakerToBrand and leaves a question the helper could not answer, it appears here.</p>`;
+            return `<p class="muted">These notes were left in the Ask MakerToBrand helper. This is a demo — they are stored only in this browser, and nothing is emailed.</p>${table}`;
           }
         };
-        let tab = MTB.param("tab") === "edit" ? "edit" : "users";
+        let tab = (MTB.param("tab") === "edit" || MTB.param("tab") === "questions") ? MTB.param("tab") : "users";
         function renderFlag() {
           const st = flagState();
           const box = document.getElementById("flag-box");
@@ -331,6 +352,15 @@
             location.href = "admin.html?tab=edit";
           });
         }
+        function bindQuestions() {
+          const btn = document.getElementById("clear-questions");
+          if (!btn) return;
+          btn.addEventListener("click", () => {
+            if (window.MTB_ASSISTANT) MTB_ASSISTANT.clearQuestions();
+            MTB.toast("Pre-signup questions cleared.");
+            draw();
+          });
+        }
         function draw() {
           kpis();
           renderFlag();
@@ -338,8 +368,9 @@
           document.getElementById("panel").innerHTML = views[tab]();
           document.querySelectorAll("#tabs button").forEach((x) => x.classList.toggle("is-on", x.getAttribute("data-tab") === tab));
           if (tab === "edit") bindEditForm();
+          if (tab === "questions") bindQuestions();
           const url = new URL(location.href);
-          if (tab === "edit") url.searchParams.set("tab", "edit");
+          if (tab === "edit" || tab === "questions") url.searchParams.set("tab", tab);
           else url.searchParams.delete("tab");
           history.replaceState(null, "", url);
           document.querySelectorAll("[data-block]").forEach((b) => b.addEventListener("click", () => {

@@ -56,3 +56,26 @@ Use **Reset to site defaults** to undo a trial.
 
 The Admin screen is at:  
 https://bizconsultant.github.io/makertobrand-demo/admin.html?tab=edit
+
+
+---
+
+## 3. Change the Ask MakerToBrand answers
+
+The helper on the site is not a live chat and does not use artificial intelligence. Every question and answer sits in one file: `js/assistant-faq.js`.
+
+1. Open the file on GitHub:  
+   [js/assistant-faq.js](https://github.com/bizconsultant/makertobrand-demo/blob/main/js/assistant-faq.js)
+2. Click the **pencil** icon, or use this direct link:  
+   [edit assistant-faq.js](https://github.com/bizconsultant/makertobrand-demo/edit/main/js/assistant-faq.js)
+3. There are two lists: **brand** (answers for brand owners) and **manufacturer** (answers for manufacturers and wholesalers). Change only the text inside the quotes.
+4. Do not delete the commas or the curly brackets. Leave words like `{membershipMonth}` and `{defaultMoq}` as they are — the site fills in the latest figures from `js/settings.js`.
+5. Click **Commit changes**, wait about one minute, then refresh the demo.
+
+A few rules so each side only sees its own deal:
+
+- In the **brand** list, do not mention the seller commission or the 3%. You may mention the shared ₹2,500 monthly membership (use `{membershipMonth}`).
+- In the **manufacturer** list, you may mention both the membership and `{commissionPercent}` taken from the payout.
+- If you add a new question, copy an existing block and change `id`, `question`, `keywords`, `answer`, `link` and `linkLabel`. Set `suggested: true` if you want it to appear as a chip people can tap.
+
+Unanswered questions that visitors leave in the helper appear in Admin under **Pre-signup questions**. Those notes stay in that browser only, because this is a demo.
