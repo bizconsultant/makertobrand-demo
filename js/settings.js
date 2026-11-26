@@ -44,7 +44,7 @@ window.MTB_SETTINGS = {
 
   /* --- Minimum order quantity (MOQ), in pieces --- */
   /* The smallest order the marketplace allows. No listing or brief can go below this. */
-  defaultMoq: 100,
+  defaultMoq: 10,
 
   /* Minimum order for each manufacturer, in pieces.
      If a figure here is below the default above, the default is used. */
