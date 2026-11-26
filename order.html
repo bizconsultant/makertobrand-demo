@@ -31,9 +31,8 @@
         const status = order.status;
         const session = MTB.getSession();
         const isSellerView = session && session.role === "manufacturer";
-        const fee = MTB.feeFor(order.total, order.makerId ? MTB.maker(order.makerId) : "Pro");
+        const fee = MTB.feeFor(order.total);
         const feeAmt = order.platformFee != null ? order.platformFee : fee.fee;
-        const waived = order.feeWaived || fee.feeWaived;
         const payout = order.makerPayout != null ? order.makerPayout : fee.makerPayout;
         function step(key, label, detail) {
           const orderSteps = ["placed", "held", "production", "inspection", "delivered", "released"];
@@ -53,7 +52,7 @@
           </div>
           <div class="escrow-callout" style="text-align:left;margin:0 0 28px">
             <h3>${order.statusLabel || "Payment held"}</h3>
-            <p>Placed ${order.placed || "today"}. Expected ${order.eta || "in the coming weeks"}. ${order.deposit ? "Deposit " + MTB.inr(order.deposit) + " held; balance " + MTB.inr(order.balance) + " is due on delivery." : "The manufacturer can see that funds are secured, and will be paid when you confirm receipt — a guarantee that exists only for on-site orders."}${isSellerView ? (waived ? " Platform fee: waived, Premium. You receive the full " + MTB.inr(order.total) + "." : " A 3% platform fee of " + MTB.inr(feeAmt) + " will be taken from your payout, leaving " + MTB.inr(payout) + ".") : ""}</p>
+            <p>Placed ${order.placed || "today"}. Expected ${order.eta || "in the coming weeks"}. ${order.deposit ? "Deposit " + MTB.inr(order.deposit) + " held; balance " + MTB.inr(order.balance) + " is due on delivery." : "The manufacturer can see that funds are secured, and will be paid when you confirm receipt — a guarantee that exists only for on-site orders."}${isSellerView ? " A 3% platform fee of " + MTB.inr(feeAmt) + " will be taken from your payout, leaving " + MTB.inr(payout) + "." : ""}</p>
           </div>
           <div class="profile-grid">
             <div>
@@ -77,7 +76,7 @@
                   <a class="btn btn-dark btn-block" href="invoice.html?id=${encodeURIComponent(order.id)}">Download GST invoice</a>
                   <a class="btn btn-ghost btn-block" href="#qc-report">Open the QC report</a>
                   <button class="btn btn-ghost btn-block" type="button" id="reorder">One-click re-order</button>
-                  <a class="btn btn-ghost btn-block" href="dashboard-brand.html">Back to dashboard</a>
+                  <a class="btn btn-ghost btn-block" href="${isSellerView ? "dashboard-maker.html" : "dashboard-brand.html"}">Back to dashboard</a>
                   <a class="btn btn-ghost btn-block" href="messages.html">Message the manufacturer</a>
                 </div>
               </div>

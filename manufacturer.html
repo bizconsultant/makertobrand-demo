@@ -34,7 +34,7 @@
             <div class="intro">
               <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
                 ${m.verified ? '<span class="badge badge-verified">Verified</span>' : ""}
-                ${m.plan === "Premium" ? '<span class="badge badge-featured">Featured</span>' : m.plan === "Pro" ? '<span class="badge badge-featured">Pro</span>' : ""}
+                ${m.featured ? '<span class="badge badge-featured">Featured</span>' : ""}
               </div>
               <h1>${MTB.escapeHtml(m.name)}</h1>
               <p style="margin:8px 0 0;max-width:36rem">${MTB.escapeHtml(m.tagline)} · ${m.city}, ${m.state}</p>

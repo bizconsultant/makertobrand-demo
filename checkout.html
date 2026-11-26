@@ -78,7 +78,7 @@
             id, type: "stock", brand: (s && s.name) || "Nila Atelier",
             makerId: first ? first.makerId : undefined,
             items: cart, total: sub,
-            platformFee: fee.fee, feeWaived: fee.fee === 0,
+            platformFee: fee.fee, feeWaived: false,
             brandPays: sub, makerPayout: fee.makerPayout,
             commission: fee.fee,
             qc: true, qcStage: "inline",

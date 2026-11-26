@@ -32,8 +32,8 @@
                 <p>₹2,500 a month. Source stock, post briefs, pay through the site — with no commission.</p>
               </button>
               <button type="button" class="role-opt" data-role="manufacturer">
-                <h3>Manufacturer</h3>
-                <p>List your unit, quote on work, receive orders. Choose Pro, Business or Premium.</p>
+                <h3>Manufacturer or wholesaler</h3>
+                <p>₹2,500 a month. List your unit or wholesale stock, quote on work, and receive orders.</p>
               </button>
             </div>
             <label class="field"><span>Studio or factory name</span>
@@ -71,32 +71,23 @@
       page: "signup",
       after() {
         let role = "brand";
-        let sellerPlan = "pro";
         function drawPlans() {
           const box = document.getElementById("plan-box");
           const btn = document.getElementById("join-btn");
           if (role === "brand") {
             const p = MTB_DATA.brandPlan;
             box.innerHTML = `<div class="plan-opt is-on" style="cursor:default">
-              <h3>${p.name} plan · ${MTB.inr(p.priceMonth)} / month</h3>
-              <p class="muted" style="margin:0">${p.blurb}</p>
+              <h3>Membership · ${MTB.inr(p.priceMonth)} / month</h3>
+              <p class="muted" style="margin:0">${p.fee}. ${p.blurb}</p>
             </div>`;
-            btn.textContent = "Demo payment · start Brand plan " + MTB.inr(p.priceMonth) + "/month";
+            btn.textContent = "Demo payment · start Brand membership " + MTB.inr(p.priceMonth) + "/month";
           } else {
-            box.innerHTML = `<p class="muted" style="margin:0 0 8px">Choose a seller plan</p>
-              <div class="plan-pick">
-                ${MTB_DATA.plans.map((p) => `
-                  <button type="button" class="plan-opt ${p.id===sellerPlan?"is-on":""}" data-splan="${p.id}">
-                    <h3>${p.name} · ${MTB.inr(p.priceMonth)} / month</h3>
-                    <p class="muted" style="margin:0">${p.fee}</p>
-                  </button>`).join("")}
-              </div>`;
-            const chosen = MTB_DATA.plans.find((p) => p.id === sellerPlan);
-            btn.textContent = "Demo payment · start " + chosen.name + " " + MTB.inr(chosen.priceMonth) + "/month";
-            box.querySelectorAll("[data-splan]").forEach((b) => b.addEventListener("click", () => {
-              sellerPlan = b.getAttribute("data-splan");
-              drawPlans();
-            }));
+            const p = MTB_DATA.sellerPlan;
+            box.innerHTML = `<div class="plan-opt is-on" style="cursor:default">
+              <h3>Membership · ${MTB.inr(p.priceMonth)} / month</h3>
+              <p class="muted" style="margin:0">${p.fee}. The 3% is taken from your payout when a payment is released — brands do not see this fee.</p>
+            </div>`;
+            btn.textContent = "Demo payment · start Seller membership " + MTB.inr(p.priceMonth) + "/month";
           }
         }
         document.querySelectorAll(".role-opt").forEach((btn) => {
@@ -109,8 +100,8 @@
         document.getElementById("signup-form").addEventListener("submit", (e) => {
           e.preventDefault();
           const fd = new FormData(e.target);
-          const plan = role === "brand" ? "Brand" : (MTB_DATA.plans.find((p) => p.id === sellerPlan) || {}).name;
-          const price = role === "brand" ? MTB_DATA.brandPlan.priceMonth : MTB_DATA.plans.find((p) => p.id === sellerPlan).priceMonth;
+          const plan = role === "brand" ? "Brand" : "Seller";
+          const price = role === "brand" ? MTB_DATA.brandPlan.priceMonth : MTB_DATA.sellerPlan.priceMonth;
           const overlay = document.createElement("div");
           overlay.style.cssText = "position:fixed;inset:0;background:rgba(20,25,36,.55);z-index:90;display:flex;align-items:center;justify-content:center;padding:20px";
           overlay.innerHTML = `<div class="summary-card" style="position:relative;top:0;max-width:440px;width:100%">

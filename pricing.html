@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Memberships · MakerToBrand</title>
-  <meta name="description" content="A ₹2,500 monthly plan for brands with no commission, and Pro, Business and Premium plans for manufacturers and wholesalers.">
+  <meta name="description" content="One membership at ₹2,500 a month for brands, manufacturers and wholesalers.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -16,28 +16,43 @@
   <header id="site-header"></header>
   <main class="page-pad">
     <div class="wrap page-intro" style="text-align:center">
-      <span class="eyebrow ink">How the platform earns</span>
-      <h1>Whoever earns from the marketplace, pays a little to be here.</h1>
-      <p class="lead" style="margin:12px auto 0">Brands pay a single subscription and never a fee at checkout. Manufacturers and wholesalers pay a membership, plus a 3% commission on each sale — or none, on Premium. Prices in Indian rupees.</p>
+      <span class="eyebrow ink">Membership</span>
+      <h1>One plan for everyone on the marketplace.</h1>
+      <p class="lead" style="margin:12px auto 0">Brands, manufacturers and ready-made wholesalers all pay ₹2,500 a month. Yearly billing is two months free. Prices in Indian rupees.</p>
       <div class="billing-toggle" style="margin-top:28px" id="billing">
         <button type="button" data-bill="month" class="is-on">Monthly</button>
         <button type="button" data-bill="year">Yearly · two months free</button>
       </div>
     </div>
     <div class="wrap">
-      <section class="pricing-block" id="brands">
-        <span class="eyebrow ink">For brands</span>
-        <h2>One plan. No commission, ever.</h2>
-        <p class="muted" style="max-width:36rem">Full access to manufacturer search, production briefs, quotes and payments held until delivery. You pay only the product price at checkout.</p>
-        <div class="plan-grid brand-plans" id="brand-plan"></div>
-      </section>
-      <section class="pricing-block" id="sellers">
-        <span class="eyebrow ink">For manufacturers &amp; wholesalers</span>
-        <h2>Get found, and keep more of each sale as you grow.</h2>
-        <p class="muted" style="max-width:36rem">Memberships unlock a verified badge, a higher place in search, and more listings. Pro and Business pay a 3% commission on each sale, taken from the payout. Premium pays none.</p>
-        <div class="plan-grid" id="plans"></div>
-      </section>
-      <p class="muted" style="text-align:center;margin-top:28px">Commission is taken from the seller’s payout when a payment is released. Memberships can be started from sign-up — here, choosing a plan simply shows the confirmation. Nothing is charged in this demo.</p>
+      <div class="plan-grid common-plan" id="common-plan"></div>
+      <div class="include-grid">
+        <section>
+          <span class="eyebrow ink">For brands</span>
+          <h2>Find factories, brief them, and order safely.</h2>
+          <ul class="include-list">
+            <li>Search and message manufacturers across India</li>
+            <li>Buy ready-made stock from a 100-piece minimum</li>
+            <li>Post custom production briefs and compare quotes</li>
+            <li>Payments held until delivery</li>
+            <li>GST invoices, tracking and one-click re-orders</li>
+            <li>QC service included with the membership</li>
+            <li>Optional garment design and tech-sheet support</li>
+          </ul>
+        </section>
+        <section>
+          <span class="eyebrow ink">For manufacturers &amp; wholesalers</span>
+          <h2>A page, a shop, and a pipeline of work.</h2>
+          <ul class="include-list">
+            <li>A profile page you can send to any buyer</li>
+            <li>A verified badge on your listing</li>
+            <li>Ready-made listings and custom quote tools</li>
+            <li>In-app messaging and payments held until delivery</li>
+            <li>Alerts when new production briefs are posted</li>
+          </ul>
+        </section>
+      </div>
+      <p class="muted" style="text-align:center;margin-top:28px">Memberships can be started from sign-up — here, choosing the plan simply shows the confirmation. Nothing is charged in this demo.</p>
     </div>
   </main>
 
@@ -49,28 +64,21 @@
       page: "pricing",
       after() {
         let bill = "month";
-        function card(p, extraClass) {
-          const amt = bill === "year" ? p.priceYear : p.priceMonth;
-          const suffix = bill === "year" ? "<span> / year</span>" : "<span> / month</span>";
-          return `<article class="plan ${p.popular ? "is-popular" : ""} ${extraClass || ""}">
-            ${p.popular ? '<div class="popular-tag">Most chosen</div>' : ""}
-            <span class="eyebrow ${p.popular ? "" : "ink"}">${p.name}</span>
-            <div class="amount">${MTB.inr(amt)}${suffix}</div>
-            <p class="${p.popular ? "" : "muted"}">${p.blurb}</p>
-            <p class="plan-fee">${p.fee}</p>
-            <ul>${p.features.map((f) => "<li>" + f + "</li>").join("")}</ul>
-            <button class="btn ${p.popular || extraClass === "is-popular" ? "btn-gold" : "btn-dark"} btn-block" data-plan="${p.id}">Choose ${p.name}</button>
-          </article>`;
-        }
         function draw() {
-          const bp = MTB_DATA.brandPlan;
-          document.getElementById("brand-plan").innerHTML = card(Object.assign({ popular: true }, bp), "is-popular");
-          document.getElementById("plans").innerHTML = MTB_DATA.plans.map((p) => card(p)).join("");
-          document.querySelectorAll("[data-plan]").forEach((b) => b.addEventListener("click", () => {
-            const id = b.getAttribute("data-plan");
-            const plan = id === "brand" ? MTB_DATA.brandPlan : MTB_DATA.plans.find((x) => x.id === id);
-            MTB.toast("Demo only — " + plan.name + " would start at " + MTB.inr(plan.priceMonth) + "/month.");
-          }));
+          const month = MTB_DATA.membershipPriceMonth;
+          const year = MTB_DATA.membershipPriceYear;
+          const amt = bill === "year" ? year : month;
+          const suffix = bill === "year" ? "<span> / year</span>" : "<span> / month</span>";
+          document.getElementById("common-plan").innerHTML = `<article class="plan is-popular">
+            <div class="popular-tag">For everyone</div>
+            <span class="eyebrow">Membership</span>
+            <div class="amount">${MTB.inr(amt)}${suffix}</div>
+            <p>The same monthly membership for brand owners, manufacturers and ready-made wholesalers.</p>
+            <button class="btn btn-gold btn-block" type="button" id="choose-plan">Choose this plan</button>
+          </article>`;
+          document.getElementById("choose-plan").addEventListener("click", () => {
+            MTB.toast("Demo only — membership would start at " + MTB.inr(month) + "/month.");
+          });
         }
         document.querySelectorAll("#billing button").forEach((btn) => {
           btn.addEventListener("click", () => {

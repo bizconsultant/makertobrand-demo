@@ -47,6 +47,7 @@
                 <h2 style="font-size:28px;margin-bottom:8px">The brief</h2>
                 <p>${MTB.escapeHtml(r.notes || "No further notes.")}</p>
                 ${r.sizes ? `<p class="muted">Size curve: ${MTB.escapeHtml(r.sizes)}</p>` : ""}
+                ${r.designSupport ? `<p>Design support: <strong>${MTB.escapeHtml(r.designSupportLabel || r.designSupport)}</strong>${r.designSupportPrice ? " · " + MTB.inr(r.designSupportPrice) + " per style" : ""} <span class="muted">(sample price – final rates coming soon)</span></p>` : ""}
                 <h2 style="font-size:28px;margin:28px 0 16px">Quotes</h2>
                 <div class="quote-cards" id="quotes"></div>
                 <div id="maker-quote" style="margin-top:28px"></div>
@@ -78,7 +79,7 @@
                 <div class="amount">${MTB.inr(q.price)} <span style="font-size:14px;font-family:var(--font-sans)">/ pc</span></div>
                 <p class="muted">Line ${MTB.inr(line)} · ${q.lead} · ${q.deposit}% deposit (${MTB.inr(deposit)})</p>
                 <p style="margin-top:8px">${MTB.qcBadge()} <span class="muted">Included for brand subscribers</span></p>
-                ${isMaker ? (function(){ const f = MTB.feeFor(line, m); return `<p class="muted">${f.feeWaived ? "Your payout: " + MTB.inr(f.makerPayout) + " · waived, Premium" : "3% platform fee " + MTB.inr(f.fee) + " · you receive " + MTB.inr(f.makerPayout)}</p>`; })() : ""}
+                ${isMaker ? (function(){ const f = MTB.feeFor(line); return `<p class="muted">3% platform fee ${MTB.inr(f.fee)} · you receive ${MTB.inr(f.makerPayout)}</p>`; })() : ""}
                 <p>${MTB.escapeHtml(q.note)}</p>
                 ${isAcc ? `<span class="badge badge-ok">Accepted</span> <a class="btn btn-gold btn-sm" href="order.html?id=MTB-1810" style="margin-top:10px">View the order</a>` :
                   (acc ? "" : `<button class="btn btn-primary" data-accept="${q.id}" type="button">Accept &amp; pay deposit</button>`)}
@@ -109,10 +110,8 @@
               const el = document.getElementById("quote-net");
               if (!el) return;
               if (!price) { el.textContent = "Enter a unit price to see your payout after the platform fee."; return; }
-              const f = MTB.feeFor(line, meMaker);
-              el.textContent = f.feeWaived
-                ? ("Line " + MTB.inr(line) + " · platform fee waived, Premium · you receive " + MTB.inr(f.makerPayout))
-                : ("Line " + MTB.inr(line) + " · 3% platform fee " + MTB.inr(f.fee) + " · you receive " + MTB.inr(f.makerPayout));
+              const f = MTB.feeFor(line);
+              el.textContent = "Line " + MTB.inr(line) + " · 3% platform fee " + MTB.inr(f.fee) + " · you receive " + MTB.inr(f.makerPayout);
             }
             const priceInp = document.querySelector('#quote-form [name="price"]');
             if (priceInp) priceInp.addEventListener("input", previewNet);
@@ -173,9 +172,9 @@
               id: orderId, type: "custom", rfqId: r.id, makerId: q.makerId,
               brand: r.brand, qty: r.qty, unit: q.price, total: line,
               deposit, balance: line - deposit,
-              platformFee: MTB.feeFor(line, m).fee, feeWaived: MTB.feeFor(line, m).feeWaived,
-              brandPays: line, makerPayout: MTB.feeFor(line, m).makerPayout,
-              commission: MTB.feeFor(line, m).fee,
+              platformFee: MTB.feeFor(line).fee, feeWaived: false,
+              brandPays: line, makerPayout: MTB.feeFor(line).makerPayout,
+              commission: MTB.feeFor(line).fee,
               qc: true, qcStage: "fabric",
               status: "deposit", statusLabel: "Deposit held · balance on delivery",
               placed: "22 Nov 2026", eta: r.deadline

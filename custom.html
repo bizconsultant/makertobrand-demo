@@ -25,7 +25,7 @@
         <h2 style="font-size:32px;margin-bottom:16px">Open briefs</h2>
         <div id="rfq-list"></div>
       </section>
-      <section>
+      <section id="brief">
         <div class="summary-card" style="position:relative;top:0">
           <h2 style="font-size:32px;margin-bottom:8px">Post a new brief</h2>
           <p class="muted">Demo only — the brief stays on this device so you can show the flow.</p>
@@ -35,7 +35,7 @@
               <label class="field"><span>Category</span>
                 <select name="category"><option>Kurtas</option><option>T-shirts</option><option>Dresses</option><option>Hoodies</option><option>Shirts</option><option>Kidswear</option><option>Festive</option><option>Other</option></select>
               </label>
-              <label class="field"><span>Quantity</span><input name="qty" type="number" min="50" value="1000" required></label>
+              <label class="field"><span>Quantity (minimum 100)</span><input name="qty" type="number" min="100" value="1000" required></label>
             </div>
             <label class="field"><span>Fabric</span><input name="fabric" required placeholder="e.g. 180 GSM organic cotton"></label>
             <div class="form-row">
@@ -43,6 +43,11 @@
               <label class="field"><span>Budget per piece (optional)</span><input name="budget" placeholder="₹400–480"></label>
             </div>
             <label class="field"><span>Size curve / notes</span><textarea name="notes" placeholder="Sizes, finishes, packing, certificates…"></textarea></label>
+            <fieldset class="design-add" id="design-support">
+              <legend>Add design support</legend>
+              <p class="muted" style="margin:0 0 8px">Optional. The platform team can design the garment and prepare the tech sheet. <a href="design.html">View the service</a>. Sample prices – final rates coming soon.</p>
+              <div id="design-options"></div>
+            </fieldset>
             <div class="dropzone" id="drop" tabindex="0">
               <strong>Upload a design or tech pack</strong>
               <p style="margin:6px 0 0;font-size:13px">A mock upload only. Choose a file to show a name — nothing is sent.</p>
@@ -67,6 +72,17 @@
       page: "custom",
       after() {
         const invite = MTB.param("invite");
+        const designSvc = MTB_DATA.designService || { options: [] };
+        const pre = MTB.param("design");
+        const optBox = document.getElementById("design-options");
+        if (optBox) {
+          const opts = [{ id: "", name: "No design support", price: 0, text: "I'll add my own design or tech pack." }].concat(designSvc.options || []);
+          optBox.innerHTML = opts.map((o, i) => {
+            const checked = pre ? o.id === pre : o.id === "";
+            const price = o.price ? `<span class="opt-price">${MTB.inr(o.price)} <span class="muted">per style</span></span>` : "";
+            return `<label><input type="radio" name="designSupport" value="${o.id}" ${checked ? "checked" : ""}> <span><strong>${MTB.escapeHtml(o.name)}</strong>${o.text ? `<div class="muted">${MTB.escapeHtml(o.text)}</div>` : ""}</span> ${price}</label>`;
+          }).join("");
+        }
         if (invite) {
           const m = MTB.maker(invite);
           const note = document.getElementById("invite-note");
@@ -115,13 +131,18 @@
           const id = "rfq-" + Date.now().toString(36);
           const deadline = fd.get("deadline");
           const pretty = deadline ? new Date(deadline + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "";
+          const designId = fd.get("designSupport") || "";
+          const designOpt = (designSvc.options || []).find((o) => o.id === designId);
           const rec = {
             id, title: fd.get("title"), brand: (s && s.name) || "Nila Atelier",
             brandCity: (s && s.city) || "Mumbai", category: fd.get("category"),
             qty: Number(fd.get("qty")), fabric: fd.get("fabric"),
             deadline: pretty, posted: "22 Nov 2026", status: "open",
             budget: fd.get("budget") || "Open", notes: fd.get("notes") || "",
-            quotes: [], invited: invite || null
+            quotes: [], invited: invite || null,
+            designSupport: designOpt ? designOpt.id : "",
+            designSupportLabel: designOpt ? designOpt.name : "",
+            designSupportPrice: designOpt ? designOpt.price : 0
           };
           const extras = MTB.getExtraRfqs();
           extras.unshift(rec);

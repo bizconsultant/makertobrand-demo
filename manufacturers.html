@@ -31,6 +31,7 @@
         <label class="field"><span>Max. minimum order</span>
           <select name="moq" id="moq">
             <option value="">Any MOQ</option>
+            <option value="100">Up to 100</option>
             <option value="150">Up to 150</option>
             <option value="250">Up to 250</option>
             <option value="400">Up to 400</option>
@@ -100,7 +101,7 @@
           `<button class="btn btn-ghost btn-sm" type="button" id="clear" style="margin-top:16px">Clear filters</button>`;
 
         function planRank(m) {
-          return m.plan === "Premium" ? 0 : m.plan === "Business" ? 1 : 2;
+          return m.featured ? 0 : 1;
         }
         function cityOk(m, city) {
           if (!city) return true;

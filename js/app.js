@@ -68,7 +68,7 @@
   function allOrders() {
     let extras = [];
     try { extras = JSON.parse(localStorage.getItem(KEY.orders) || "[]"); } catch { extras = []; }
-    return extras.concat(MTB_DATA.orders);
+    return extras.concat(MTB_DATA.orders).map(normalizeOrder);
   }
 
   function tierPrice(prod, qty) {
@@ -146,6 +146,7 @@
       { href: "manufacturers.html", id: "makers", label: "Find Manufacturers" },
       { href: "stock.html", id: "stock", label: "Ready-made" },
       { href: "custom.html", id: "custom", label: "Custom orders" },
+      { href: "design.html", id: "design", label: "Design support" },
       { href: "pricing.html", id: "pricing", label: "Memberships" },
       { href: "how-it-works.html", id: "how", label: "How it works" },
       { href: "about.html", id: "about", label: "About" }
@@ -202,14 +203,16 @@
             <a href="manufacturers.html">Find manufacturers</a>
             <a href="stock.html">Ready-made stock</a>
             <a href="custom.html">Custom production</a>
+            <a href="design.html">Design &amp; tech-sheet support</a>
             <a href="pricing.html">Memberships</a>
           </div>
           <div>
             <h4>Platform</h4>
             <a href="about.html">About the owners</a>
             <a href="qc.html">Quality control</a>
+            <a href="design.html">Design support</a>
             <a href="how-it-works.html">How it works</a>
-            <a href="how-it-works.html#payments">Payments &amp; escrow</a>
+            <a href="how-it-works.html#steps">The steps</a>
             <a href="how-it-works.html#safety">Trade safely</a>
             <a href="signup.html">Create an account</a>
             <a href="login.html">Sign in</a>
@@ -278,22 +281,31 @@
   }
   function loyaltyRate() { return 0.03; }
   function pct(rate) { return Math.round(rate * 100) + "%"; }
-  function sellerFeeRate(makerOrPlan) {
-    const plan = typeof makerOrPlan === "string" ? makerOrPlan : (makerOrPlan && makerOrPlan.plan);
-    return plan === "Premium" ? 0 : 0.03;
+  function sellerFeeRate() {
+    return (window.MTB_DATA && MTB_DATA.commissionDefault) || 0.03;
   }
-  function feeFor(merchandise, makerOrPlan) {
+  function feeFor(merchandise) {
     const amount = Math.round(Number(merchandise) || 0);
-    const rate = sellerFeeRate(makerOrPlan);
+    const rate = sellerFeeRate();
     const fee = Math.round(amount * rate);
     return {
       rate,
       fee,
-      feeWaived: rate === 0,
+      feeWaived: false,
       brandPays: amount,
       makerPayout: amount - fee,
-      label: rate === 0 ? "waived, Premium" : "3% platform fee"
+      label: "3% platform fee"
     };
+  }
+  function normalizeOrder(o) {
+    const f = feeFor(o.total);
+    return Object.assign({}, o, {
+      platformFee: f.fee,
+      feeWaived: false,
+      brandPays: o.brandPays != null ? o.brandPays : o.total,
+      makerPayout: f.makerPayout,
+      commission: f.fee
+    });
   }
   function cartMerchandise(cart) {
     return (cart || []).reduce((sum, item) => {
@@ -406,7 +418,7 @@
 
   function makerCard(m) {
     const verified = m.verified ? `<span class="badge badge-verified">Verified</span>` : "";
-    const featured = m.plan === "Premium" ? `<span class="badge badge-featured">Featured</span>` : "";
+    const featured = m.featured ? `<span class="badge badge-featured">Featured</span>` : "";
     return `<a class="maker-card" href="manufacturer.html?id=${encodeURIComponent(m.id)}">
       <div class="media"><img src="${m.cover}" alt="${escapeHtml(m.name)}"></div>
       <div class="card-body">

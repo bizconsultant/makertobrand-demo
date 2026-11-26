@@ -18,7 +18,7 @@
     <div class="wrap-wide page-intro">
       <span class="eyebrow ink">Manufacturer dashboard</span>
       <h1 id="hello">Enquiries, quotes, orders and earnings.</h1>
-      <p class="lead">The view a factory owner would open every morning — work coming in, money still held, money already released. Your payout is the order value minus a 3% platform fee, or the full amount if you are on Premium.</p>
+      <p class="lead">The view a factory owner would open every morning — work coming in, money still held, money already released. You are on the ₹2,500 monthly membership. A 3% commission of the total bill is taken from your payout when payment is released.</p>
     </div>
     <div class="wrap-wide">
       <div class="kpi-grid" id="kpis"></div>
@@ -95,27 +95,22 @@
             </tbody></table></div>`;
           },
           earnings() {
-            const waived = MTB.sellerFeeRate(me) === 0;
             const rows = myOrders.map((o) => {
               const comm = feeAmt(o);
               const net = payout(o);
-              const feeLabel = (o.feeWaived || (comm === 0 && waived)) ? "waived, Premium" : MTB.inr(comm);
               const releasedAmt = o.status === "released" ? net : "—";
               const heldAmt = o.status !== "released" ? (o.status === "deposit" && o.deposit ? Math.round(net * (o.deposit/o.total)) : net) : "—";
               return `<tr>
                 <td>${o.id}</td>
                 <td>${MTB.inr(o.total)}</td>
-                <td>${feeLabel}</td>
+                <td>${MTB.inr(comm)}</td>
                 <td>${releasedAmt === "—" ? "—" : MTB.inr(releasedAmt)}</td>
                 <td>${heldAmt === "—" ? "—" : MTB.inr(heldAmt)}</td>
               </tr>`;
             }).join("");
-            return `<p class="muted">${waived
-              ? "You are on the Premium plan, so the 3% platform fee is waived. You receive the full order value when payment is released."
-              : "A 3% platform fee is taken from your payout when payment is released. Brands never see this fee — they pay only the product price. Upgrade to Premium to have the fee waived."}</p>
-              <p style="margin:16px 0"><a class="btn btn-ghost btn-sm" href="pricing.html">Review memberships</a>
-              <a class="btn btn-ghost btn-sm" href="manufacturer.html?id=${makerId}">View your public profile</a></p>
-              <div class="table-wrap"><table class="data"><thead><tr><th>Order</th><th>Gross</th><th>Platform fee</th><th>Released to you</th><th>Still held</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+            return `<p class="muted">Your membership is ₹2,500 a month. A 3% commission of the total bill is taken from your payout when payment is released. Brands never see this fee — they pay only the product price.</p>
+              <p style="margin:16px 0"><a class="btn btn-ghost btn-sm" href="manufacturer.html?id=${makerId}">View your public profile</a></p>
+              <div class="table-wrap"><table class="data"><thead><tr><th>Order</th><th>Gross</th><th>3% commission</th><th>Released to you</th><th>Still held</th></tr></thead><tbody>${rows}</tbody></table></div>`;
           }
                 };
         let tab = "enquiries";

@@ -18,14 +18,15 @@ npx serve .
 
 ## What you can click through
 
-- Marketing home with manufacturer search, how-it-works, and memberships: Brand plan at ₹2,500/month (no commission), and seller plans Pro ₹1,500, Business ₹2,500 and Premium ₹5,000 (0% commission)
+- Marketing home with manufacturer search, how-it-works, and a single ₹2,500/month membership for brands, manufacturers and wholesalers
 - Open sign-up and sign-in (demo only — choose Brand, Manufacturer, or Admin)
 - Manufacturer directory and profile pages (a mini website for factories that often have none)
-- Ready-made wholesale catalogue, product pages with price breaks and MOQ, cart, and a mock checkout
+- Ready-made wholesale catalogue, product pages with price breaks and a 100-piece minimum order, cart, and a mock checkout
 - Custom production briefs, quote comparison, accept-and-pay-a-deposit
 - Payments described as held until delivery (intended partner: Razorpay). Checkout uses a **Demo payment** button and never collects card details
 - About the owners (Nizam Uddin and Dipankar Bose, details in `js/data.js`) and a Quality Control service page
-- Brand dashboard, manufacturer dashboard (gross, 3% fee or waived on Premium, net payout), in-app messaging, and an admin view with commissions, membership revenue and “Block account”
+- Garment Design & Tech-Sheet Support for brands (sample prices, added to a custom brief)
+- Brand dashboard (brand membership only — no seller commission), manufacturer dashboard (₹2,500 plus 3% of the bill taken from payout), in-app messaging, and an admin view with commissions, membership revenue and “Block account”
 
 A small **Demo – sample data** label sits at the top of every page, with a “View as” switcher for presenting the three roles.
 

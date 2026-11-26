@@ -18,7 +18,7 @@
     <div class="wrap-wide page-intro">
       <span class="eyebrow ink">Admin</span>
       <h1>The house view.</h1>
-      <p class="lead">Users, orders, seller commissions, memberships from brands and factories, fair-use flags, and actions to warn, remove a verified badge, or block an account.</p>
+      <p class="lead">Users, orders, seller commissions, the shared ₹2,500 membership from brands and factories, fair-use flags, and actions to warn, remove a verified badge, or block an account.</p>
     </div>
     <div class="wrap-wide">
       <div class="kpi-grid" id="kpis"></div>
@@ -55,12 +55,9 @@
         const listForRev = users();
         const active = listForRev.filter((u) => u.status === "active");
         const brandSubs = active.filter((u) => u.type === "Brand").length;
-        const sellerCounts = { Pro: 0, Business: 0, Premium: 0 };
-        active.filter((u) => u.type === "Manufacturer").forEach((u) => {
-          if (sellerCounts[u.plan] != null) sellerCounts[u.plan] += 1;
-        });
+        const sellerSubs = active.filter((u) => u.type === "Manufacturer").length;
         const brandRev = brandSubs * (MTB_DATA.brandPlan.priceMonth);
-        const sellerRev = sellerCounts.Pro * 1500 + sellerCounts.Business * 2500 + sellerCounts.Premium * 5000;
+        const sellerRev = sellerSubs * (MTB_DATA.sellerPlan.priceMonth);
         const memRev = brandRev + sellerRev;
         const comm = orders.reduce((a,o) => a + (o.commission || o.platformFee || 0), 0);
         const releasedComm = orders.filter((o) => o.status === "released").reduce((a,o) => a + (o.commission || o.platformFee || 0), 0);
@@ -98,21 +95,19 @@
                   <td>${MTB.escapeHtml(o.brand)}</td>
                   <td>${m ? MTB.escapeHtml(m.name) : "—"}</td>
                   <td>${MTB.inr(o.brandPays != null ? o.brandPays : o.total)}</td>
-                  <td>${(o.feeWaived || (o.commission===0 && o.platformFee===0)) ? "waived, Premium" : MTB.inr(o.commission || o.platformFee || 0)}</td>
+                  <td>${MTB.inr(o.commission || o.platformFee || 0)}</td>
                   <td><span class="badge ${o.status==="released"?"badge-ok":"badge-held"}">${o.statusLabel}</span></td>
                 </tr>`;
               }).join("")}
             </tbody></table></div>`;
           },
           commission() {
-            return `<p class="muted">Seller commission is booked when an order is placed and earned when payment is released. Brands pay a ₹2,500 subscription and never a checkout fee. Manufacturers and wholesalers pay Pro, Business or Premium memberships. QuickLot is blocked and is not counted.</p>
+            return `<p class="muted">Seller commission is booked when an order is placed and earned when payment is released. Everyone on the marketplace pays the ₹2,500 monthly membership. Manufacturers and wholesalers also pay a 3% commission of the total bill, taken from their payout. QuickLot is blocked and is not counted.</p>
               <div class="table-wrap"><table class="data"><thead><tr><th>Source</th><th>Detail</th><th>Amount</th></tr></thead><tbody>
                 <tr><td>Released payments</td><td>3% seller commission already earned</td><td>${MTB.inr(releasedComm)}</td></tr>
                 <tr><td>Held payments</td><td>Seller commission waiting on delivery</td><td>${MTB.inr(comm - releasedComm)}</td></tr>
-                <tr><td>Brand subscriptions</td><td>${brandSubs} active × ${MTB.inr(2500)} / month</td><td>${MTB.inr(brandRev)}</td></tr>
-                <tr><td>Pro (manufacturers)</td><td>${sellerCounts.Pro} active × ${MTB.inr(1500)} / month</td><td>${MTB.inr(sellerCounts.Pro*1500)}</td></tr>
-                <tr><td>Business (manufacturers)</td><td>${sellerCounts.Business} active × ${MTB.inr(2500)} / month</td><td>${MTB.inr(sellerCounts.Business*2500)}</td></tr>
-                <tr><td>Premium (manufacturers)</td><td>${sellerCounts.Premium} active × ${MTB.inr(5000)} / month</td><td>${MTB.inr(sellerCounts.Premium*5000)}</td></tr>
+                <tr><td>Brand memberships</td><td>${brandSubs} active × ${MTB.inr(MTB_DATA.brandPlan.priceMonth)} / month</td><td>${MTB.inr(brandRev)}</td></tr>
+                <tr><td>Seller memberships</td><td>${sellerSubs} active manufacturers &amp; wholesalers × ${MTB.inr(MTB_DATA.sellerPlan.priceMonth)} / month</td><td>${MTB.inr(sellerRev)}</td></tr>
                 <tr><td colspan="2"><strong>This month, if all held payments released</strong></td><td><strong>${MTB.inr(comm + memRev)}</strong></td></tr>
               </tbody></table></div>`;
           }

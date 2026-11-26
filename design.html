@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Garment Design &amp; Tech-Sheet Support · MakerToBrand</title>
+  <meta name="description" content="Optional garment design and tech-sheet support for brands. Sample prices, with a 100-piece production minimum.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-bar"></div>
+  <header id="site-header"></header>
+  <main>
+    <section class="design-hero">
+      <div class="design-hero-copy">
+        <span class="eyebrow">For brands · an extra service</span>
+        <h1>Design the garment. Prepare the tech sheet.</h1>
+        <p class="lead" id="design-lead">Ask the platform team to design a style and write the factory-ready tech sheet — measurements, pattern details, fabric, trims and construction notes — before you brief a manufacturer.</p>
+        <p class="sample-flag">Sample prices – final rates coming soon</p>
+        <div class="hero-actions">
+          <a class="btn btn-gold" href="custom.html#brief">Add this to a brief</a>
+          <a class="btn btn-ghost hero-ghost" href="how-it-works.html#steps">See how production works</a>
+        </div>
+      </div>
+      <div class="design-hero-visual">
+        <img src="images/color-fabric.jpg" alt="Printed fabrics and colour references on a work table">
+      </div>
+    </section>
+    <section class="page-pad" style="padding-top:48px">
+      <div class="wrap">
+        <div class="page-intro" style="text-align:center;padding-top:0">
+          <span class="eyebrow ink">What it costs</span>
+          <h2 style="margin-bottom:8px">Priced per style, as a sample.</h2>
+          <p class="muted" id="price-note">Sample prices – final rates coming soon. Production minimum on MakerToBrand is 100 pieces.</p>
+        </div>
+        <div class="plan-grid design-price-grid" id="design-prices"></div>
+      </div>
+    </section>
+    <section style="padding-top:0">
+      <div class="wrap">
+        <span class="eyebrow ink">Inside the tech sheet</span>
+        <h2 style="margin-bottom:12px">Everything a factory needs to cut and stitch correctly.</h2>
+        <div class="stay-grid" style="margin-top:24px">
+          <article class="stay-card">
+            <h3>Measurements and spec</h3>
+            <p>A size set and measurement chart, with tolerances, so the sample and the bulk order match what the brand approved.</p>
+          </article>
+          <article class="stay-card">
+            <h3>Pattern details</h3>
+            <p>Construction of the pattern, seam allowances, grading notes and any special blocks the floor should follow.</p>
+          </article>
+          <article class="stay-card">
+            <h3>Fabric, trims and notes</h3>
+            <p>Approved fabric and GSM, trims and labels, and construction notes for stitching, finishing and packing.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section style="padding-top:8px;padding-bottom:64px">
+      <div class="wrap">
+        <span class="eyebrow ink">How to add it</span>
+        <h2 style="margin-bottom:12px">Tick it when you post a custom brief.</h2>
+        <p class="lead">On the custom production form, choose design only, a tech sheet only, or both. The request stays with the brief so the factory works from a clear pack. This is a paid add-on for brands; sample prices are shown until vendor rates are confirmed.</p>
+        <div class="hero-actions" style="margin-top:24px">
+          <a class="btn btn-dark" href="custom.html#brief">Post a brief with design support</a>
+          <a class="btn btn-ghost" href="dashboard-brand.html">Open the brand dashboard</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    MTB.init({
+      page: "design",
+      after() {
+        const d = MTB_DATA.designService || {};
+        if (d.lead) document.getElementById("design-lead").textContent = d.lead;
+        if (d.sampleNote && d.moqNote) {
+          document.getElementById("price-note").textContent = [d.sampleNote, d.moqNote].filter(Boolean).join(" ");
+        }
+        document.getElementById("design-prices").innerHTML = (d.options || []).map((o) => `
+          <article class="plan ${o.popular ? "is-popular" : ""}">
+            ${o.popular ? '<div class="popular-tag">Most complete</div>' : ""}
+            <span class="eyebrow ${o.popular ? "" : "ink"}">${MTB.escapeHtml(o.name)}</span>
+            <div class="amount">${MTB.inr(o.price)} <span>${MTB.escapeHtml(o.unit)}</span></div>
+            <p class="${o.popular ? "" : "muted"}">${MTB.escapeHtml(o.text)}</p>
+            <p class="plan-fee">${MTB.escapeHtml(d.sampleNote || "Sample prices – final rates coming soon")}</p>
+            <a class="btn ${o.popular ? "btn-gold" : "btn-dark"} btn-block" href="custom.html?design=${encodeURIComponent(o.id)}#brief">Add to a brief</a>
+          </article>`).join("");
+      }
+    });
+  </script>
+</body>
+</html>

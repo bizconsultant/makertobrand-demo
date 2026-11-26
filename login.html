@@ -36,7 +36,7 @@
             <label class="field"><span>I am a</span>
               <select name="role">
                 <option value="brand">Brand owner</option>
-                <option value="manufacturer">Manufacturer</option>
+                <option value="manufacturer">Manufacturer or wholesaler</option>
                 <option value="admin">Platform admin</option>
               </select>
             </label>
@@ -67,7 +67,7 @@
           e.preventDefault();
           const fd = new FormData(e.target);
           const role = fd.get("role");
-          MTB.setSession({ role, name: fd.get("name"), city: "Mumbai", plan: role === "manufacturer" ? "Pro" : role === "admin" ? "—" : "Brand" });
+          MTB.setSession({ role, name: fd.get("name"), city: "Mumbai", plan: role === "manufacturer" ? "Seller" : role === "admin" ? "—" : "Brand" });
           location.href = role === "admin" ? "admin.html" : role === "manufacturer" ? "dashboard-maker.html" : "dashboard-brand.html";
         });
       }
